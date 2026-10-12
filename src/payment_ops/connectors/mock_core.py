@@ -7,6 +7,7 @@ from payment_ops.connectors.base import AccountResponse, AccountStatus, RecordNo
 
 
 _ACCOUNTS = MappingProxyType({
+    "SYNTHETIC-SENDER-FROZEN": AccountResponse(AccountStatus.FROZEN, Decimal("100000.00"), True),
     "SYNTHETIC-SENDER-001": AccountResponse(AccountStatus.ACTIVE, Decimal("100000.00"), True),
     "SYNTHETIC-SENDER-RESTRICTED": AccountResponse(AccountStatus.RESTRICTED, Decimal("100000.00"), True),
     "SYNTHETIC-SENDER-CLOSED": AccountResponse(AccountStatus.CLOSED, Decimal("0.00"), False),

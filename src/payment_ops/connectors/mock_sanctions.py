@@ -7,6 +7,17 @@ from payment_ops.domain.payment import Payment
 
 
 _SCREENINGS = MappingProxyType({
+    "SYNTHETIC-WIRE-SMALL": SanctionsResponse(SanctionsResult.CLEAR),
+    "SYNTHETIC-WIRE-BALANCE-BOUNDARY": SanctionsResponse(SanctionsResult.CLEAR),
+    "SYNTHETIC-WIRE-LIMIT-BOUNDARY": SanctionsResponse(SanctionsResult.CLEAR),
+    "SYNTHETIC-WIRE-LOW-BALANCE": SanctionsResponse(SanctionsResult.CLEAR),
+    "SYNTHETIC-WIRE-FROZEN": SanctionsResponse(SanctionsResult.CLEAR),
+    "SYNTHETIC-WIRE-CLOSED": SanctionsResponse(SanctionsResult.CLEAR),
+    "SYNTHETIC-WIRE-WIRES-DISABLED": SanctionsResponse(SanctionsResult.CLEAR),
+    "SYNTHETIC-WIRE-LIMIT-EXCEEDED": SanctionsResponse(SanctionsResult.CLEAR),
+    "SYNTHETIC-WIRE-MULTIPLE-REVIEW": SanctionsResponse(SanctionsResult.POTENTIAL_MATCH),
+    "SYNTHETIC-WIRE-REJECT-REVIEW": SanctionsResponse(SanctionsResult.POTENTIAL_MATCH),
+    "SYNTHETIC-WIRE-UNAVAILABLE": SanctionsResponse(SanctionsResult.CLEAR),
     "SYNTHETIC-WIRE-001": SanctionsResponse(SanctionsResult.CLEAR),
     "SYNTHETIC-WIRE-REVIEW": SanctionsResponse(SanctionsResult.CLEAR),
     "SYNTHETIC-WIRE-HOLD": SanctionsResponse(SanctionsResult.CLEAR),

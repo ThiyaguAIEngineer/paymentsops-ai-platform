@@ -7,6 +7,7 @@ from payment_ops.connectors.base import LimitsResponse, RecordNotFoundError
 
 
 _LIMITS = MappingProxyType({
+    "SYNTHETIC-SENDER-FROZEN": LimitsResponse(Decimal("50000.00")),
     "SYNTHETIC-SENDER-001": LimitsResponse(Decimal("50000.00")),
     "SYNTHETIC-SENDER-RESTRICTED": LimitsResponse(Decimal("50000.00")),
     "SYNTHETIC-SENDER-CLOSED": LimitsResponse(Decimal("0.00")),

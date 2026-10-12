@@ -18,6 +18,8 @@ class RecordNotFoundError(ConnectorError):
 
 class AccountStatus(StrEnum):
     ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+    FROZEN = "FROZEN"
     RESTRICTED = "RESTRICTED"
     CLOSED = "CLOSED"
 
