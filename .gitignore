@@ -34,6 +34,7 @@ pip-wheel-metadata/
 # Local environment settings (retain shareable examples)
 .env
 .env.*
+.streamlit/secrets.toml
 !.env.example
 !.env.template
 

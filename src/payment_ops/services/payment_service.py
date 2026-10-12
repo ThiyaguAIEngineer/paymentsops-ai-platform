@@ -11,6 +11,7 @@ from payment_ops.connectors.base import (
 from payment_ops.domain.payment import Payment
 from payment_ops.domain.validation import validate_payment
 from payment_ops.services.decision_engine import DecisionResult, evaluate_payment
+from payment_ops.services.results import ConnectorEvidence, PaymentProcessingResult
 
 
 logger = logging.getLogger(__name__)
@@ -47,8 +48,13 @@ class PaymentService:
         self._sanctions = sanctions
 
     def process_payment(self, payment: Payment) -> DecisionResult:
+        """Compatibility API returning the existing decision contract."""
+        return self.process_payment_with_evidence(payment).decision
+
+    def process_payment_with_evidence(self, payment: Payment) -> PaymentProcessingResult:
+        """Return the decision and the exact responses used to evaluate it."""
         if validate_payment(payment):
-            return evaluate_payment(payment)
+            return PaymentProcessingResult(evaluate_payment(payment), ConnectorEvidence())
 
         # Validated identifiers are present. Each independent lookup is attempted,
         # preserving available rejection/review facts when another control fails.
@@ -56,4 +62,11 @@ class PaymentService:
         limits = _lookup("Limits", lambda: self._limits.get_limit(payment.sender_account_id), LimitsResponse)
         fraud = _lookup("Fraud", lambda: self._fraud.screen(payment.payment_id), FraudResponse)
         sanctions = _lookup("Sanctions", lambda: self._sanctions.screen(payment), SanctionsResponse)
-        return evaluate_payment(payment, account=account, limits=limits, fraud=fraud, sanctions=sanctions)
+        decision = evaluate_payment(payment, account=account, limits=limits, fraud=fraud, sanctions=sanctions)
+        evidence = ConnectorEvidence(
+            account=account if isinstance(account, AccountResponse) else None,
+            limits=limits if isinstance(limits, LimitsResponse) else None,
+            fraud=fraud if isinstance(fraud, FraudResponse) else None,
+            sanctions=sanctions if isinstance(sanctions, SanctionsResponse) else None,
+        )
+        return PaymentProcessingResult(decision, evidence)
