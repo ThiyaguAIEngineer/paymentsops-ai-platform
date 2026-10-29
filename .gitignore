@@ -47,3 +47,9 @@ pip-wheel-metadata/
 Thumbs.db
 
 # Keep uv.lock and .python-version versioned for reproducibility.
+
+# Generated Week 2 vectors and local indexes
+.cache/payment_ops/
+data/knowledge/indexes/
+evaluation/week2/results/
+evaluation/week2/reliability_review.json

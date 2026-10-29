@@ -16,7 +16,9 @@ uv sync --locked
 uv run streamlit run src/payment_ops/ui/app.py --browser.gatherUsageStats=false
 ```
 
-Open the local URL printed by Streamlit. The dashboard processes all 20 sample
+Open the local URL printed by Streamlit. Choose **Wire Validation** or
+**Knowledge Assistant** in the sidebar. Wire Validation is the default and needs
+no AI credentials. The dashboard processes all 20 sample
 instructions through PaymentService, supports decision filtering and payment
 selection, and displays all six control findings.
 
@@ -52,8 +54,33 @@ sanitized at the service boundary; no balances, scores, or successful screenings
 are invented. Retrieved evidence may support a rejection or review and does not
 itself imply PASS. Evidence contains no extra account identifiers or metadata.
 
-All inputs and integrations are synthetic mocks. No real bank systems, payment
-execution, databases, authentication, or AI capabilities are included.
+Wire Validation uses synthetic mocks and never sends payment records to an LLM.
+The Knowledge Assistant sends only submitted questions and synthetic operational
+documents to the configured Nebius provider. There are no real bank integrations
+or payment-execution capabilities.
+
+## Knowledge Assistant setup
+
+Provider credentials and model settings are read by the backend from the launching
+process environment, not collected or displayed by the UI. Make NEBIUS_API_KEY
+available securely in your terminal before launching. Set the verified models:
+
+```powershell
+$env:NEBIUS_EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-8B"
+$env:NEBIUS_GENERATION_MODEL = "Qwen/Qwen3-30B-A3B-Instruct-2507"
+uv run streamlit run src/payment_ops/ui/app.py --browser.gatherUsageStats=false
+```
+
+Select **Knowledge Assistant**, enter a synthetic procedure/error-code question,
+and click **Ask**. The service initializes only on submission and is cached per
+browser session across reruns. It reuses the document embedding cache; only
+explicit submissions invoke answers. Expand supporting evidence beneath each
+source to inspect exact quotations and section/version metadata. Clarifications,
+limited guidance, evidence abstentions, rejected responses and provider failures
+have distinct presentation; no fake answers are substituted.
+
+See [Week 2 UI integration](docs/WEEK2_STREAMLIT.md) for lifecycle, configuration
+and limitations. Restart Streamlit after changing environment configuration.
 
 ## Tests
 

@@ -1,0 +1,11 @@
+{
+  "source_run": "evaluation/week2/results/answers_development/20261029T011211499185Z",
+  "files_sha256": {
+    "evaluation/week2/results/answers_development/20261029T011211499185Z/claims.csv": "ac3eb4e473717586715bbf686ac6debc7e1bd31231e8dac39b5c94b5d7ff734f",
+    "evaluation/week2/results/answers_development/20261029T011211499185Z/completeness.csv": "c7fa9abd42e661cf718389bc54f89d4cc2cd1c5729098db5ca770ca64118ecf6",
+    "evaluation/week2/results/answers_development/20261029T011211499185Z/report.md": "cb27b8332d1ade4020f12fef98a9ccea2835859092b53385ac7a56ea3c9f91cb",
+    "evaluation/week2/results/answers_development/20261029T011211499185Z/results.json": "0f5ffe0e8e92f21b39197a81924943a3791ec7f196ed26c43793b6a2129986a3",
+    "evaluation/week2/results/answers_development/20261029T011211499185Z/sources.json": "97d7bcc1e54fdd31249e6dd8022dc0869a50fe416811684c713f21fa7bd45041",
+    "docs/WEEK2_TASK15_COMPARISON.md": "cb27b8332d1ade4020f12fef98a9ccea2835859092b53385ac7a56ea3c9f91cb"
+  }
+}
