@@ -1,0 +1,431 @@
+{
+  "schema_version": 1,
+  "dataset_version": "1.0.0",
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question": "What details are required to open a wire recall request?",
+      "category": "Simple factual",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-WIRE-RECALL/WR-REQUEST"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "evidence-1",
+          "alternatives": [
+            "SYN-WIRE-RECALL/WR-REQUEST"
+          ]
+        }
+      ],
+      "multiple_sections_required": false,
+      "context_sections": [],
+      "justification": "WR-REQUEST enumerates recall-specific fields, requester verification, case preparation, and owner review.",
+      "expected_behavior": "List required details with a citation; invent no fields."
+    },
+    {
+      "question_id": "Q02",
+      "question": "Does ACCEPTED mean a payment has settled?",
+      "category": "Simple factual; related states",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-STATUS/SS-STATES"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "evidence-1",
+          "alternatives": [
+            "SYN-STATUS/SS-STATES"
+          ]
+        }
+      ],
+      "multiple_sections_required": false,
+      "context_sections": [],
+      "justification": "SS-STATES explicitly distinguishes ACCEPTED from SETTLED and defines matched confirmation/reconciliation evidence.",
+      "expected_behavior": "Explain the distinction and required settlement evidence."
+    },
+    {
+      "question_id": "Q03",
+      "question": "What does SYN-BEN-301 mean, and what should I do first?",
+      "category": "Exact error-code lookup",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-BENEFICIARY/BV-NAME",
+        "SYN-ERROR-CATALOG/EC-BENEFICIARY"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "evidence-1",
+          "alternatives": [
+            "SYN-ERROR-CATALOG/EC-BENEFICIARY",
+            "SYN-BENEFICIARY/BV-NAME"
+          ]
+        }
+      ],
+      "multiple_sections_required": false,
+      "context_sections": [],
+      "justification": "Both the canonical catalog entry and name-mismatch procedure establish SYN-BEN-301 and the initial comparison action; either supports the requested first step.",
+      "expected_behavior": "Match the exact code and cite meaning and first action."
+    },
+    {
+      "question_id": "Q04",
+      "question": "What does SYN-ACH-201 mean? Can I immediately retry?",
+      "category": "Exact code; action restriction",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-ACH-RETURNS/AR-NEXT",
+        "SYN-ERROR-CATALOG/EC-ACH"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "evidence-1",
+          "alternatives": [
+            "SYN-ERROR-CATALOG/EC-ACH",
+            "SYN-ACH-RETURNS/AR-NEXT"
+          ]
+        }
+      ],
+      "multiple_sections_required": false,
+      "context_sections": [],
+      "justification": "EC-ACH defines account closed and no immediate retry; AR-NEXT identifies the same code and details correction/review gates. These are alternative sufficient sources for this narrow question.",
+      "expected_behavior": "Explain account-closed meaning and correction/review gate."
+    },
+    {
+      "question_id": "Q05",
+      "question": "We already sent the wire and want to get the money back. Where do we start?",
+      "category": "Semantic/paraphrased",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-WIRE-RECALL/WR-ELIGIBILITY",
+        "SYN-WIRE-RECALL/WR-REQUEST"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "evidence-1",
+          "alternatives": [
+            "SYN-WIRE-RECALL/WR-ELIGIBILITY"
+          ]
+        },
+        {
+          "group_id": "evidence-2",
+          "alternatives": [
+            "SYN-WIRE-RECALL/WR-REQUEST"
+          ]
+        }
+      ],
+      "multiple_sections_required": true,
+      "context_sections": [],
+      "justification": "Eligibility establishes status/prerequisites and uncertain recovery; request preparation supplies starting case steps and required details.",
+      "expected_behavior": "Recognize recall intent and prerequisites; promise no recovery."
+    },
+    {
+      "question_id": "Q06",
+      "question": "The payee label differs from the account holder. How do I resolve it?",
+      "category": "Semantic/paraphrased",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-BENEFICIARY/BV-CORRECT",
+        "SYN-BENEFICIARY/BV-NAME"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "evidence-1",
+          "alternatives": [
+            "SYN-BENEFICIARY/BV-NAME"
+          ]
+        },
+        {
+          "group_id": "evidence-2",
+          "alternatives": [
+            "SYN-BENEFICIARY/BV-CORRECT"
+          ]
+        }
+      ],
+      "multiple_sections_required": true,
+      "context_sections": [],
+      "justification": "Name mismatch triage and verified correction/revalidation are distinct required parts of the resolution workflow.",
+      "expected_behavior": "Retrieve name-mismatch guidance despite different wording."
+    },
+    {
+      "question_id": "Q07",
+      "question": "A status update is delayed and the analyst wants to resend. What checks and escalation apply?",
+      "category": "Multi-document",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-EXCEPTION/EX-DUPLICATE",
+        "SYN-EXCEPTION/EX-ESCALATE",
+        "SYN-STATUS/SS-DELAY"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "evidence-1",
+          "alternatives": [
+            "SYN-STATUS/SS-DELAY"
+          ]
+        },
+        {
+          "group_id": "evidence-2",
+          "alternatives": [
+            "SYN-EXCEPTION/EX-DUPLICATE"
+          ]
+        },
+        {
+          "group_id": "evidence-3",
+          "alternatives": [
+            "SYN-EXCEPTION/EX-ESCALATE"
+          ]
+        }
+      ],
+      "multiple_sections_required": true,
+      "context_sections": [],
+      "justification": "Status investigation, duplicate comparison/review, and escalation ownership/handoff each supply distinct operational evidence. A cross-reference alone does not substitute for the target procedure.",
+      "expected_behavior": "Combine status uncertainty and duplicate prevention with both sources."
+    },
+    {
+      "question_id": "Q08",
+      "question": "An ACH return cites invalid account details. What correction and case evidence are needed?",
+      "category": "Multi-document",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-ACH-RETURNS/AR-NEXT",
+        "SYN-BENEFICIARY/BV-CORRECT",
+        "SYN-EXCEPTION/EX-EVIDENCE"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "evidence-1",
+          "alternatives": [
+            "SYN-ACH-RETURNS/AR-NEXT"
+          ]
+        },
+        {
+          "group_id": "evidence-2",
+          "alternatives": [
+            "SYN-BENEFICIARY/BV-CORRECT"
+          ]
+        },
+        {
+          "group_id": "evidence-3",
+          "alternatives": [
+            "SYN-EXCEPTION/EX-EVIDENCE"
+          ]
+        }
+      ],
+      "multiple_sections_required": true,
+      "context_sections": [],
+      "justification": "Return-specific retry gates, verified correction/revalidation, and full common case fields are separately required.",
+      "expected_behavior": "Combine relevant steps; do not substitute wire recall instructions."
+    },
+    {
+      "question_id": "Q09",
+      "question": "How do I reverse this payment?",
+      "category": "Ambiguous",
+      "classification": "ambiguous",
+      "relevant_sections": [],
+      "required_evidence_groups": [],
+      "multiple_sections_required": false,
+      "context_sections": [
+        "SYN-WIRE-RECALL/WR-SCOPE",
+        "SYN-ACH-RETURNS/AR-SCOPE",
+        "SYN-STATUS/SS-STATES"
+      ],
+      "justification": "Rail and release status are absent; WR-SCOPE, AR-SCOPE, and SS-STATES provide disambiguation context, not a definitive procedure for this unspecified payment.",
+      "expected_behavior": "Ask rail and current status before prescribing a procedure."
+    },
+    {
+      "question_id": "Q10",
+      "question": "It failed. Should I retry?",
+      "category": "Ambiguous",
+      "classification": "ambiguous",
+      "relevant_sections": [],
+      "required_evidence_groups": [],
+      "multiple_sections_required": false,
+      "context_sections": [
+        "SYN-EXCEPTION/EX-TRIAGE",
+        "SYN-ERROR-CATALOG/EC-LOOKUP"
+      ],
+      "justification": "EX-TRIAGE and EC-LOOKUP require exact error, rail, and status before action; unspecified failure cannot justify retry.",
+      "expected_behavior": "Request exact error, rail, and status; avoid unconditional retry."
+    },
+    {
+      "question_id": "Q11",
+      "question": "How does a recall differ from cancellation before release?",
+      "category": "Closely related procedures",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-WIRE-RECALL/WR-SCOPE"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "evidence-1",
+          "alternatives": [
+            "SYN-WIRE-RECALL/WR-SCOPE"
+          ]
+        }
+      ],
+      "multiple_sections_required": false,
+      "context_sections": [
+        "SYN-STATUS/SS-STATES"
+      ],
+      "justification": "WR-SCOPE directly defines both recall and pre-release cancellation, including their status boundary; SS-STATES is supporting context rather than necessary additional evidence.",
+      "expected_behavior": "Explain the boundary and status prerequisite."
+    },
+    {
+      "question_id": "Q12",
+      "question": "Is SYN-BEN-302 handled the same way as SYN-BEN-301?",
+      "category": "Closely related codes",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-BENEFICIARY/BV-FORMAT",
+        "SYN-BENEFICIARY/BV-NAME",
+        "SYN-ERROR-CATALOG/EC-BENEFICIARY"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "name-handling",
+          "alternatives": [
+            "SYN-ERROR-CATALOG/EC-BENEFICIARY",
+            "SYN-BENEFICIARY/BV-NAME"
+          ]
+        },
+        {
+          "group_id": "format-handling",
+          "alternatives": [
+            "SYN-ERROR-CATALOG/EC-BENEFICIARY",
+            "SYN-BENEFICIARY/BV-FORMAT"
+          ]
+        }
+      ],
+      "multiple_sections_required": false,
+      "context_sections": [],
+      "justification": "EC-BENEFICIARY compares both meanings and initial actions in one table. Alternatively BV-NAME and BV-FORMAT together supply the two handling branches. The catalog alone can satisfy both groups; additional sections are not inherently required.",
+      "expected_behavior": "Distinguish format failure from name mismatch."
+    },
+    {
+      "question_id": "Q13",
+      "question": "What does SYN-ACH-299 mean?",
+      "category": "Deliberately unanswerable; unknown code",
+      "classification": "unsupported",
+      "relevant_sections": [],
+      "required_evidence_groups": [],
+      "multiple_sections_required": false,
+      "context_sections": [
+        "SYN-ERROR-CATALOG/EC-LOOKUP"
+      ],
+      "justification": "SYN-ACH-299 is absent from the eight-code catalog. EC-LOOKUP supports unknown-code handling only, not an invented meaning.",
+      "expected_behavior": "State the code is undocumented; never infer from SYN-ACH-201/202."
+    },
+    {
+      "question_id": "Q14",
+      "question": "Has real customer account 123456 received its payment today?",
+      "category": "Deliberately unanswerable; live data",
+      "classification": "unsupported",
+      "relevant_sections": [],
+      "required_evidence_groups": [],
+      "multiple_sections_required": false,
+      "context_sections": [],
+      "justification": "No document contains live customer/account data or transaction access.",
+      "expected_behavior": "Explain lack of live transaction access; invent no status."
+    },
+    {
+      "question_id": "Q15",
+      "question": "What legally mandated recall deadline applies to every US bank?",
+      "category": "Deliberately unanswerable; external policy",
+      "classification": "unsupported",
+      "relevant_sections": [],
+      "required_evidence_groups": [],
+      "multiple_sections_required": false,
+      "context_sections": [],
+      "justification": "All corpus procedures are fictional and explicitly establish no universal legal recall deadline.",
+      "expected_behavior": "State synthetic corpus cannot establish legal requirements."
+    },
+    {
+      "question_id": "Q16",
+      "question": "Does an acknowledgment of my recall request guarantee recovery?",
+      "category": "Factual; related outcomes",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-STATUS/SS-RETURNS",
+        "SYN-WIRE-RECALL/WR-TRACK"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "evidence-1",
+          "alternatives": [
+            "SYN-WIRE-RECALL/WR-TRACK",
+            "SYN-STATUS/SS-RETURNS"
+          ]
+        }
+      ],
+      "multiple_sections_required": false,
+      "context_sections": [],
+      "justification": "Both sections explicitly state acknowledgment is receipt only, not guaranteed recovery, and distinguish recovery evidence. They are alternative sufficient sources.",
+      "expected_behavior": "Distinguish acknowledgment from confirmed recovery."
+    },
+    {
+      "question_id": "Q17",
+      "question": "An archived v0.9 draft says delayed status permits immediate retry; what applies now?",
+      "category": "Superseded information",
+      "classification": "fixture-dependent",
+      "relevant_sections": [],
+      "required_evidence_groups": [],
+      "multiple_sections_required": false,
+      "context_sections": [
+        "SYN-STATUS/SS-DELAY",
+        "SYN-EXCEPTION/EX-DUPLICATE"
+      ],
+      "justification": "Current SS-DELAY and EX-DUPLICATE prohibit retry under uncertainty, but archived v0.9 evidence and mixed-version fixtures do not exist. Defer the version-handling test.",
+      "expected_behavior": "Use current approved guidance; identify archived fixture as superseded."
+    },
+    {
+      "question_id": "Q18",
+      "question": "Two equally current approved excerpts disagree on whether SYN-EXC-501 permits retry. Which should I follow?",
+      "category": "Conflicting information",
+      "classification": "fixture-dependent",
+      "relevant_sections": [],
+      "required_evidence_groups": [],
+      "multiple_sections_required": false,
+      "context_sections": [
+        "SYN-ERROR-CATALOG/EC-EXCEPTION",
+        "SYN-EXCEPTION/EX-DUPLICATE"
+      ],
+      "justification": "No two authoritative current excerpts in the corpus contradict each other on duplicate retry. Controlled contradictory fixtures are required; ordinary current guidance cannot test conflict detection.",
+      "expected_behavior": "Cite the conflict, abstain on disputed action, and request owner review."
+    },
+    {
+      "question_id": "Q19",
+      "question": "What did the recall procedure require in 2024?",
+      "category": "Unanswerable historical scope",
+      "classification": "unsupported",
+      "relevant_sections": [],
+      "required_evidence_groups": [],
+      "multiple_sections_required": false,
+      "context_sections": [],
+      "justification": "Only initial version 1.0.0 effective 2026-10-28 is supplied; no historical 2024 procedure exists.",
+      "expected_behavior": "Explain historical version unavailable; do not project current steps backward."
+    },
+    {
+      "question_id": "Q20",
+      "question": "Which evidence is required to close a suspected duplicate case?",
+      "category": "Simple factual",
+      "classification": "answerable",
+      "relevant_sections": [
+        "SYN-EXCEPTION/EX-CLOSE"
+      ],
+      "required_evidence_groups": [
+        {
+          "group_id": "evidence-1",
+          "alternatives": [
+            "SYN-EXCEPTION/EX-CLOSE"
+          ]
+        }
+      ],
+      "multiple_sections_required": false,
+      "context_sections": [
+        "SYN-EXCEPTION/EX-DUPLICATE"
+      ],
+      "justification": "EX-CLOSE directly enumerates duplicate-specific closure evidence and supervisor review; EX-DUPLICATE adds investigation context but is not necessary to list closure requirements.",
+      "expected_behavior": "List closure requirements grounded in authored sections."
+    }
+  ]
+}

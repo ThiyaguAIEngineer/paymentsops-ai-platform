@@ -94,9 +94,7 @@ def render_detail(entry: PaymentEntry, processing: PaymentProcessingResult) -> N
     st.caption("Read-only synthetic responses used for this decision. Retrieved evidence does not imply a PASS; see the validation checks above.")
 
 
-def main() -> None:
-    st.set_page_config(page_title="Payment Operations Intelligence Platform", page_icon="🏦", layout="wide")
-    st.title("Payment Operations Intelligence Platform")
+def render_wire_validation() -> None:
     st.subheader("Commercial Wire Validation Simulator")
     st.caption("Week 1 • Synthetic data only • Read-only educational simulator")
     try:
@@ -117,6 +115,18 @@ def main() -> None:
     st.dataframe(payment_rows(filtered), hide_index=True, width="stretch")
     selected_id = st.selectbox("Select a payment", [payment.payment_id for payment, _ in filtered], key="selected_payment")
     render_detail(next(entry for entry in filtered if entry[0].payment_id == selected_id), processing_results[selected_id])
+
+
+def main() -> None:
+    st.set_page_config(page_title="Payment Operations Intelligence Platform", page_icon="🏦", layout="wide")
+    st.title("Payment Operations Intelligence Platform")
+    view = st.sidebar.radio("Workspace", ["Wire Validation", "Knowledge Assistant"], key="workspace_view")
+    if view == "Knowledge Assistant":
+        # Lazy import keeps Week 1 startup independent of RAG configuration.
+        from payment_ops.ui.knowledge_view import render_knowledge_assistant
+        render_knowledge_assistant()
+    else:
+        render_wire_validation()
 
 
 if __name__ == "__main__":

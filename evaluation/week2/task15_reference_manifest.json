@@ -1,0 +1,12 @@
+{
+  "label": "Task 15 reference: grounded-v5-development 17/18 (94.4%)",
+  "source_run": "evaluation/week2/results/answers_development/20261029T004007182456Z",
+  "files_sha256": {
+    "evaluation/week2/results/answers_development/20261029T004007182456Z/claims.csv": "667c836d2efdef114eae5b36248a485b6fc8ae0099b50c58b79263018852cb74",
+    "evaluation/week2/results/answers_development/20261029T004007182456Z/completeness.csv": "460930f1bebc40461704f237cfd42aad24fefa4f300da605cb0be6e4d36d8fdf",
+    "evaluation/week2/results/answers_development/20261029T004007182456Z/report.md": "a5b6ebeb4aba12be8f7c3b12c2d0a589adc35b41bb93ce8a8e7d633a796560fb",
+    "evaluation/week2/results/answers_development/20261029T004007182456Z/results.json": "3c3d5f8d2b57ff6944953ea530395187d05e501d7ad03555f3fdf73a7687385b",
+    "evaluation/week2/results/answers_development/20261029T004007182456Z/sources.json": "97d7bcc1e54fdd31249e6dd8022dc0869a50fe416811684c713f21fa7bd45041",
+    "docs/WEEK2_ANSWER_RELIABILITY_COMPARISON.md": "a5b6ebeb4aba12be8f7c3b12c2d0a589adc35b41bb93ce8a8e7d633a796560fb"
+  }
+}

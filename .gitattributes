@@ -1,0 +1,4 @@
+# Preserve frozen evaluation documentation and hash-pinned JSON byte-for-byte.
+docs/WEEK2_*.md -text whitespace=cr-at-eol
+evaluation/week2/*.json -text whitespace=cr-at-eol
+evaluation/week2/profiles/*.json -text whitespace=cr-at-eol
