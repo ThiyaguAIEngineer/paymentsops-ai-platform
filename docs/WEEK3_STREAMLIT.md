@@ -56,6 +56,39 @@ investigation acceptance never executes, releases, rejects, settles or changes a
 
 ## Session and safety boundaries
 
+### Downloadable investigation case report (Task 9A)
+
+For the retained investigation's matching payment, **Download Investigation
+Report** exports a PDF containing actual snapshot facts: payment/run references,
+lifecycle, simulator checks, current and historical evidence, model versus fallback
+actions, recorded failures/gaps, recommendation revision and human-review events.
+Completed, escalated and failed snapshots are supported; an awaiting-review report
+is clearly **provisional**, not a final outcome. No unrecorded event timestamp or
+approval is inferred. Synthetic-data/no-payment-authorization notices appear in the
+report, and reviewer labels are explicitly unauthenticated.
+
+The pure Python entry point is
+`payment_ops.investigation.report.generate_investigation_report(snapshot) -> bytes`.
+Snapshot validation/projection is separate from ReportLab rendering. It uses only
+the detached controller snapshot, never calls the graph/model/connectors, never
+recalculates payment rules and never mutates state. Matching inputs with the locked
+dependencies produce identical bytes (no generation timestamp; invariant PDF
+metadata). Paragraphs escape model/reviewer text, use bundled fonts, wrap long
+references and paginate tables. Download data stays in memory; no report database
+or server-side file export is introduced.
+
+`st.download_button(..., on_click="ignore")` downloads prepared bytes without a
+script rerun. Even an unsolicited rerun reads state without restarting/resuming the
+graph. The button is hidden during busy work, unavailable/invalid snapshots and a
+different payment selection. Preparation errors show a sanitized message; they
+never alter the investigation outcome. Install the updated lockfile with
+`uv sync --locked`; no additional credentials/configuration are needed.
+
+The finalized Gen Academy report/demo remain the historical `90f67fe` baseline.
+After enhancement acceptance, review submission sections 6-8, 14, 18-19 and the
+video's screen sequence/test-count narration before claiming the enhancement in a
+new course delivery. Task 9A does not rewrite those finalized claims.
+
 One current controller/checkpointer is retained in browser session state, never
 in a global resource cache. Ordinary reruns, expanding evidence and workspace
 navigation do not execute tools. Non-widget payment-choice state survives navigation.

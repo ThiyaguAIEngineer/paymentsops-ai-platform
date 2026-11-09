@@ -6,6 +6,7 @@ import streamlit as st
 
 from payment_ops.investigation.review import ACCEPT, ESCALATE, FURTHER, ReviewValidationError
 from payment_ops.investigation.runtime import create_investigation_controller
+from payment_ops.investigation.report import generate_investigation_report, ReportValidationError
 from payment_ops.samples.payments import SYNTHETIC_PAYMENTS
 
 
@@ -236,4 +237,26 @@ def render_investigation_agent():
         if selected_id != state["payment_id"]:
             st.info("The selected payment differs from the retained investigation. Review controls are hidden. Select its original payment or explicitly start a new investigation.")
         else:
+            if not busy:
+                _render_report_download(state)
             _render_review(controller, state)
+
+
+def _render_report_download(state):
+    """Export detached state only. Clicking downloads bytes without a rerun."""
+    try:
+        pdf = generate_investigation_report(state)
+    except ReportValidationError:
+        st.caption("An investigation report is not available for this snapshot.")
+        return
+    except Exception:
+        st.warning("The report could not be prepared. Investigation state is unchanged.")
+        return
+    if state["phase"] == "awaiting_review":
+        st.caption("Provisional report: human review is pending; this is not a final investigation outcome.")
+    st.download_button(
+        "Download Investigation Report", data=pdf, mime="application/pdf",
+        file_name=f"PaymentOps-Investigation-{state['run_id']}.pdf",
+        key=f"investigation_report_{state['run_id']}_{state['recommendation']['revision']}_{state['phase']}",
+        on_click="ignore",
+    )

@@ -4,6 +4,29 @@
 **Prepared:** November 9, 2026 (America/New_York).
 **Course deadline:** November 11, 2026; exact upload cutoff/timezone is unconfirmed.
 
+## Approved amendment: Task 9A investigation PDF report (November 9, 2026)
+
+The owner approved one read-only case-report enhancement after the verified
+`90f67fe` submission checkpoint. A standalone service validates and projects the
+session controller's detached investigation snapshot, then ReportLab renders PDF
+bytes. The Streamlit view offers **Download Investigation Report** for the matching
+retained payment once an awaiting-review, completed, escalated or failed snapshot
+is available. Awaiting-review exports are explicitly provisional.
+
+The report includes actual payment/run details, lifecycle, existing deterministic
+findings, control evidence and IDs, model/fallback action and tool history, failures,
+gaps, recommendation revision and human-review events. Synthetic-data and no-payment-
+authorization disclaimers are mandatory. No generation timestamp or invented event,
+identity, approval or evidence is added. Same snapshot and locked renderer produce
+identical bytes. Missing optional values remain marked as not recorded.
+
+Export must not invoke the graph, model, KnowledgeService or connectors; it must
+not change selection, state, findings, review history or budgets. The download uses
+precomputed bytes and `on_click="ignore"`; report preparation failures leave the
+investigation untouched. No graph/policy/engine change, persistent report store,
+real banking access or payment action is authorized. SOP guidance (9B) and UI
+redesign (9C) remain separate. The original proposal below is retained as history.
+
 ## 1. Goal, boundaries and acceptance
 
 **One-line definition:** My agent helps payment operations analysts replace manual

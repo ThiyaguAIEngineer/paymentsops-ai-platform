@@ -1,5 +1,69 @@
 # Payment Operations Intelligence Platform — project state
 
+## Week 3 Task 9A: downloadable investigation case report (November 9, 2026)
+
+This is the current checkpoint; Task 8A and older sections below are historical.
+Started from verified branch `feat/week3-payment-investigation-agent`, HEAD
+`90f67fe59eaf7a48bdc8c5e96589776fc3dcae6a`. Only the two expected unrelated Week 2
+DOCX exports were untracked. Task 8B committed/pushed the Week 3 implementation and
+submission documents at that hash; course submission remains unconfirmed.
+
+Approved enhancement implemented: `investigation/report.py` validates the detached
+controller snapshot and projects frozen report sections; `report_pdf.py` renders
+PDF bytes with ReportLab, independent of Streamlit. The view offers **Download
+Investigation Report** only for a ready snapshot matching the selected payment.
+Pending human review is prominently provisional. Completed, escalated and failed
+investigations retain their actual stored lifecycle and outcome.
+
+Contents include synthetic payment/run references, simulator finding and account,
+balance, limits, fraud and sanctions results; current and historical evidence IDs;
+model/fallback action provenance; tool attempts; recorded planner/connector errors;
+unresolved gaps; recommendation revision and human-review history. No timestamps,
+approvals, customer facts or evidence are invented. Synthetic-data and no-payment-
+authorization notices are explicit. Reviewer labels remain unauthenticated.
+
+Export uses only existing state, without recomputing payment rules, graph resume,
+provider/connector calls or state mutation. Download sends precomputed bytes with
+`on_click="ignore"`; selection, counts, budgets and review history are unchanged.
+Missing optional values are marked not recorded; failed controls remain unavailable.
+Escaped literal text, bundled fonts, wrapping tables and page footers provide readable
+pagination. ReportLab invariant metadata and no generation timestamp make repeat
+exports of the same snapshot byte-identical with locked dependencies.
+
+Dependencies: runtime `reportlab>=4.4,<5` locked to **4.5.1**; development-only
+`pypdf>=6,<7` locked to **6.21.4** for validation/text extraction. No existing locked
+package versions changed. A temporary PDFium renderer was installed only in the
+ignored `.cache/payment_ops/pdfqa/` QA directory, not in project manifests.
+
+Verification: focused PDF plus investigation UI suite **31 passed in 17.56s**;
+full offline suite **839 passed in 48.57s** (previous 824 plus 13 PDF and 2 download
+interaction cases). Coverage includes all-pass, low balance, Fraud outage, planner
+timeout/fallback, acceptance/escalation, a retained-state recheck, missing optional
+values, failed lookup, invalid snapshots, valid PDF/extracted facts, repeatable bytes,
+literal long notes, unchanged state/call counts and download-trigger replay. AppTest
+exposes download as an unknown element rather than a clickable wrapper: tests assert
+the actual `ignore_rerun` flag and submit its widget trigger to verify that even an
+unsolicited backend rerun cannot start/resume the graph. A real browser file-save
+rehearsal remains an owner acceptance step.
+
+Visual QA inspected all eight rendered pages from pending and escalated offline
+sample reports; layouts were readable with no observed clipping/overlap. Samples
+remain ignored local QA artifacts, not saved evaluation results. `git diff --check`
+and relative documentation link checks passed. No Nebius calls; graph, planner,
+review policy, payment engine, synthetic fixtures and Week 2 behavior are unchanged.
+
+PRD amendment and Streamlit guide updated. Final Gen Academy submission/demo files
+remain unchanged at their approved baseline. Before revised delivery, review
+submission sections 6-8, 14, 18-19 and demo screen/test-count narration after all
+enhancements are accepted. No new course submission, upload or live export test is
+claimed. Nothing staged, committed or pushed in Task 9A; unrelated DOCX exports
+remain untouched.
+
+Next: owner reviews the report/download in the running app, then separately scopes
+Task 9B SOP guidance. No known technical blocker for 9B; this task does not authorize
+or implement guidance, a UI redesign (9C), additional agents/connectors, banking
+writes, authentication, persistence, AWS or real bank access.
+
 ## Week 3 Task 8A: submission preparation checkpoint (November 9, 2026)
 
 This is the current checkpoint. Sections below retain Week 1/Week 2 history and

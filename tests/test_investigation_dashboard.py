@@ -363,3 +363,52 @@ def test_in_progress_request_disables_new_starts_and_hides_review_controls(mount
     app.run()
     assert snapshot(app) == before and len(created) == 1
     assert element(app.button, "Accept Investigation Recommendation")
+
+
+@pytest.mark.parametrize("payment,action", [
+    ("SYNTHETIC-WIRE-001", "Accept Investigation Recommendation"),
+    ("SYNTHETIC-WIRE-UNAVAILABLE", "End and Escalate"),
+])
+def test_report_download_is_bound_to_snapshot_and_never_reexecutes(mounted, monkeypatch, payment, action):
+    from payment_ops.ui import investigation_view as view
+    from payment_ops.investigation.report import generate_investigation_report
+
+    exports = []
+    def capture(state):
+        exports.append((deepcopy(state), generate_investigation_report(state)))
+        return exports[-1][1]
+    monkeypatch.setattr(view, "generate_investigation_report", capture)
+    app, created, spies = mounted
+    open_agent(app)
+    assert not app.get("download_button")
+    start(app, payment)
+    assert not app.exception
+    before = deepcopy(snapshot(app))
+    selected = element(app.selectbox, "Select a synthetic wire payment").value
+    downloads = app.get("download_button")
+    assert len(downloads) == 1 and downloads[0].proto.label == "Download Investigation Report"
+    assert downloads[0].proto.ignore_rerun  # frontend download suppresses rerun
+    assert exports[-1][0] == before and exports[-1][1].startswith(b"%PDF-")
+    assert any("Provisional report" in c.value for c in app.caption)
+    # AppTest exposes download as UnknownElement (no .click()). Submit the actual
+    # widget trigger to test the stronger case of an unsolicited backend rerun.
+    widgets = app._tree.get_widget_states()
+    widgets.widgets.add(id=downloads[0].proto.id, trigger_value=True)
+    controller = app.session_state["investigation_controller"]
+    with monkeypatch.context() as guard:
+        guard.setattr(controller, "start", Mock(side_effect=AssertionError("No restart")))
+        guard.setattr(controller, "resume", Mock(side_effect=AssertionError("No resume")))
+        app._run(widgets)
+    assert not app.exception and snapshot(app) == before
+    assert element(app.selectbox, "Select a synthetic wire payment").value == selected
+    assert len(created) == 1 and len(created[0][1].calls) == 5
+    assert all(len(v[0].mock_calls) == 1 for v in spies.values())
+    element(app.button, action).click().run()
+    after = deepcopy(snapshot(app))
+    assert exports[-1][0] == after and after["phase"] in ("completed_reviewed", "escalated")
+    assert not any("Provisional report" in c.value for c in app.caption)
+    app.run()
+    assert snapshot(app) == after and len(created[0][1].calls) == 5
+    assert all(len(v[0].mock_calls) == 1 for v in spies.values())
+    element(app.selectbox, "Select a synthetic wire payment").set_value("SYNTHETIC-WIRE-LOW-BALANCE").run()
+    assert not app.get("download_button")  # cannot mislabel old case as new selection
