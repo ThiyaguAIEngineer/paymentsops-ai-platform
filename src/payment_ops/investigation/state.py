@@ -87,6 +87,8 @@ class HumanReviewState(TypedDict):
     note: str | None
     reviewer_label: str | None
     requested_control: Control | None
+    payload: dict[str, JSONValue] | None
+    acknowledgment_only: bool
     events: list[dict[str, JSONValue]]
 
 
@@ -96,7 +98,7 @@ class InvestigationState(TypedDict):
     payment_id: str
     payment_snapshot: PaymentSnapshot | None
     input_errors: list[str]
-    phase: Literal["loading", "collecting", "summarizing", "awaiting_review", "completed", "escalated", "failed"]
+    phase: Literal["loading", "collecting", "summarizing", "awaiting_review", "completed_reviewed", "escalated", "failed"]
     outcome_reason: str | None
     attempted_controls: list[Control]
     completed_controls: list[Control]
@@ -156,7 +158,8 @@ def new_investigation_state(*, run_id: str, thread_id: str, payment_id: str) -> 
         active_elapsed_seconds=0.0, findings=None,
         recommendation={"revision": 0, "text": None, "evidence_ids": []},
         human_review={"pending_review_id": None, "decision": None, "note": None,
-                     "reviewer_label": None, "requested_control": None, "events": []},
+                     "reviewer_label": None, "requested_control": None, "payload": None,
+                     "acknowledgment_only": False, "events": []},
     )
 
 

@@ -1,12 +1,13 @@
-"""Bounded serial investigation graph. No human interrupt, UI or payment actions."""
+"""Bounded investigation with genuine recommendation-only review interrupts."""
 
 from copy import deepcopy
 from time import perf_counter
 from weakref import finalize
 
 from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.errors import GraphRecursionError
+from langgraph.errors import GraphInterrupt, GraphRecursionError
 from langgraph.graph import END, START, StateGraph
+from langgraph.types import interrupt
 
 from payment_ops.connectors.base import CoreBankingConnector, FraudConnector, LimitsConnector, SanctionsConnector
 from payment_ops.investigation.planner import (
@@ -15,6 +16,10 @@ from payment_ops.investigation.planner import (
     planner_failure_category, validate_action,
 )
 from payment_ops.investigation.state import InvestigationState, ToolPolicyError
+from payment_ops.investigation.review import (
+    FURTHER, ReviewValidationError, finalize_review, prepare_review,
+    record_review_response, validate_review_response,
+)
 from payment_ops.investigation.summary import evaluate_findings, summarize_investigation
 from payment_ops.investigation.tools import TOOLS, InvestigationTools
 
@@ -134,15 +139,52 @@ def build_investigation_graph(initial_state: InvestigationState, *,
 
     def evaluate_and_summarize(state):
         try:
+            if (state["active_elapsed_seconds"] >= budgets.max_active_seconds
+                    and state["planning_status"] != "degraded"):
+                state = _failure(state, "active_execution_budget_exhausted", tool_name="orchestrator")
             return summarize_investigation(state)
         finally:
             close_owned()
+
+    def human_review(state):
+        # Pure validation/payload work only: this node restarts on resume. When
+        # a raw caller bypasses controller preflight, re-interrupt instead of
+        # raising and leaving an invalid cached resume value stuck in the task.
+        payload = deepcopy(state["human_review"]["payload"])
+        while True:
+            response = interrupt(payload)
+            try:
+                validated = validate_review_response(state, response, budgets)
+            except ReviewValidationError as error:
+                payload = {**deepcopy(state["human_review"]["payload"]), "validation_error": str(error)}
+                continue
+            return record_review_response(state, validated, budgets)
+
+    def execute_review_check(state):
+        review = state["human_review"]
+        events = review["events"]
+        control = review["requested_control"]
+        action = next((name for name, value in TOOLS.items() if value == control), None)
+        if (review["decision"] != FURTHER or not events or events[-1]["action"] != FURTHER
+                or sum(e["action"] == FURTHER for e in events) != 1 or action is None
+                or state["tool_attempt_count"] >= budgets.max_tool_attempts
+                or state["active_elapsed_seconds"] >= budgets.max_active_seconds):
+            return _failure(state, "human_recheck_refused", tool_name="orchestrator")
+        try:
+            return tools.invoke(state, action, request_id=f"{events[-1]['review_id']}:recheck",
+                                purpose="human_recheck")
+        except ToolPolicyError:
+            return _failure(state, "human_recheck_refused", tool_name="orchestrator")
 
     builder = StateGraph(InvestigationState)
     builder.add_node("load_payment", load_payment)
     builder.add_node("plan_next", plan_next)
     builder.add_node("execute_tool", execute_tool)  # Task 3 dispatcher also records evidence.
     builder.add_node("evaluate_and_summarize", evaluate_and_summarize)
+    builder.add_node("prepare_review", lambda s: prepare_review(s, budgets))
+    builder.add_node("human_review", human_review)
+    builder.add_node("execute_review_check", execute_review_check)
+    builder.add_node("finalize_review", lambda s: finalize_review(s, budgets))
     builder.add_edge(START, "load_payment")
     builder.add_conditional_edges("load_payment", lambda s: "plan" if s["phase"] == "collecting" else "summary",
                                   {"plan": "plan_next", "summary": "evaluate_and_summarize"})
@@ -150,24 +192,63 @@ def build_investigation_graph(initial_state: InvestigationState, *,
                                   {"tool": "execute_tool", "summary": "evaluate_and_summarize"})
     builder.add_conditional_edges("execute_tool", lambda s: "summary" if s["phase"] == "summarizing" else "plan",
                                   {"summary": "evaluate_and_summarize", "plan": "plan_next"})
-    # Task 5 can replace only this edge with a review node after the stable summary.
-    builder.add_edge("evaluate_and_summarize", END)
+    builder.add_conditional_edges("evaluate_and_summarize", lambda s: "end" if s["phase"] == "failed" else "review",
+                                  {"end": END, "review": "prepare_review"})
+    builder.add_conditional_edges("prepare_review", lambda s: "review" if s["phase"] == "awaiting_review" else "end",
+                                  {"review": "human_review", "end": END})
+    builder.add_conditional_edges("human_review", lambda s: "recheck" if s["human_review"]["decision"] == FURTHER else "finalize",
+                                  {"recheck": "execute_review_check", "finalize": "finalize_review"})
+    builder.add_edge("execute_review_check", "evaluate_and_summarize")
+    builder.add_edge("finalize_review", END)
     graph = builder.compile(checkpointer=checkpointer if checkpointer is not None else InMemorySaver())
     finalize(graph, close_owned)
     return graph
 
 
+def drive_investigation(graph, graph_input, config):
+    """Internal driver shared by start/resume; omit non-JSON Interrupt objects."""
+    try:
+        graph.invoke(graph_input, config)
+        return deepcopy(graph.get_state(config).values)
+    except GraphRecursionError:
+        saved = graph.get_state(config).values
+        final = summarize_investigation(_failure(saved, "graph_step_budget_exhausted", tool_name="orchestrator"))
+        final["phase"], final["outcome_reason"] = "escalated", "graph_step_budget_exhausted"
+        final["human_review"]["pending_review_id"], final["human_review"]["payload"] = None, None
+        final["summary"]["review_required"] = False
+        final["summary"]["outcome_reason"] = final["outcome_reason"]
+        # Finalizer's outgoing edge is END; do not leave a phantom pending review.
+        graph.update_state(config, final, as_node="finalize_review")
+        return final
+    except (GraphInterrupt, ReviewValidationError):
+        # Never translate a review pause or invalid review response into success.
+        raise
+    except Exception:
+        # Unexpected orchestration failures are terminal and sanitized. Do not
+        # retry the failing node, synthesize evidence, or rerun payment evaluation.
+        saved = graph.get_state(config).values
+        if not saved:
+            raise ToolPolicyError("investigation_checkpoint_unavailable") from None
+        final = _failure(saved, "orchestration_failure", tool_name="orchestrator")
+        final["phase"], final["outcome_reason"] = "failed", "orchestration_failure"
+        final["pending_action"] = None
+        final["human_review"]["pending_review_id"], final["human_review"]["payload"] = None, None
+        final["summary"] = deepcopy(final["summary"]) or {
+            "payment_id": final["payment_id"], "decision_engine_finding": deepcopy(final["findings"]),
+        }
+        final["summary"].update({
+            "investigation_outcome": "failed", "outcome_reason": "orchestration_failure",
+            "review_required": False, "human_review_implemented": True,
+        })
+        graph.update_state(config, final, as_node="finalize_review")
+        return final
+
+
 def invoke_investigation(graph, initial_state: InvestigationState, *, recursion_limit: int = 40):
-    """Drive one new investigation safely; no review/resume is implemented here."""
+    """Drive a new run until its genuine review interrupt or safe terminal failure."""
     if type(recursion_limit) is not int or not 1 <= recursion_limit <= 40:
         raise ValueError("Invalid graph recursion limit")
     config = {"configurable": {"thread_id": initial_state["thread_id"]}, "recursion_limit": recursion_limit}
     if graph.get_state(config).values:
         raise ToolPolicyError("investigation_already_started")
-    try:
-        return graph.invoke(deepcopy(initial_state), config)
-    except GraphRecursionError:
-        saved = graph.get_state(config).values or deepcopy(initial_state)
-        final = summarize_investigation(_failure(saved, "graph_step_budget_exhausted", tool_name="orchestrator"))
-        graph.update_state(config, final, as_node="evaluate_and_summarize")
-        return final
+    return drive_investigation(graph, deepcopy(initial_state), config)

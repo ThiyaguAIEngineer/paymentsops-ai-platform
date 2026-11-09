@@ -79,11 +79,11 @@ def test_two_model_selected_orders_invoke_real_tools_and_match_existing_engine(r
     assert result["findings"]["primary_reason"] == expected_decision(initial["payment_id"]).primary_reason
     assert all(len(c.mock_calls) == 1 for c in connectors.values())
     assert result["human_review"]["decision"] is None
-    assert result["summary"]["review_required"] and not result["summary"]["human_review_implemented"]
+    assert result["summary"]["review_required"] and result["summary"]["human_review_implemented"]
     assert "no permission" in result["recommendation"]["text"]
     assert json.loads(json.dumps(result, allow_nan=False)) == result
     config = {"configurable": {"thread_id": initial["thread_id"]}}
-    assert graph.get_state(config).values == result and graph.get_state(config).next == ()
+    assert graph.get_state(config).values == result and graph.get_state(config).next == ("human_review",)
     assert len(list(graph.get_state_history(config))) >= 10
 
 
@@ -111,7 +111,7 @@ def test_adverse_findings_use_existing_engine_without_payment_mutation(run_graph
 def test_persistent_fraud_failure_preserves_other_evidence_and_escalates(run_graph, connectors):
     order = ["get_fraud_evidence", "get_sanctions_evidence", "get_core_evidence", "get_limit_evidence", "finish"]
     result, provider, _, _ = run_graph([action(n) for n in order], payment_id="SYNTHETIC-WIRE-UNAVAILABLE")
-    assert result["phase"] == "escalated" and result["outcome_reason"] == "incomplete_evidence"
+    assert result["phase"] == "awaiting_review" and result["outcome_reason"] == "incomplete_evidence"
     assert result["planning_status"] == "succeeded"  # valid planning, incomplete tool evidence
     assert result["findings"]["decision"] == "MANUAL REVIEW"
     assert result["summary"]["unresolved_evidence_gaps"] == ["fraud"]
@@ -140,7 +140,7 @@ def test_one_model_selected_transient_recovery_is_explicit_and_bounded(run_graph
 def test_second_recovery_is_rejected_and_does_not_loop(run_graph, connectors):
     connectors["fraud"].screen.side_effect = TimeoutError("SECRET")
     result, provider, _, _ = run_graph([action("get_fraud_evidence")] * 3)
-    assert result["planning_status"] == "degraded" and result["phase"] == "escalated"
+    assert result["planning_status"] == "degraded" and result["phase"] == "awaiting_review"
     assert connectors["fraud"].screen.call_count == 2
     assert result["tool_attempt_count"] == 6 and len(provider.calls) == 3
     assert result["summary"]["unresolved_evidence_gaps"] == ["fraud"]
@@ -172,7 +172,7 @@ def test_invalid_input_skips_planning_and_downstream_controls(run_graph, connect
 ])
 def test_planner_failures_use_visible_bounded_fallback(run_graph, connectors, bad_step):
     result, provider, _, _ = run_graph([bad_step])
-    assert result["phase"] == "escalated" and result["outcome_reason"] == "planner_degraded"
+    assert result["phase"] == "awaiting_review" and result["outcome_reason"] == "planner_degraded"
     assert result["planning_status"] == "degraded" and result["planner_call_count"] == 1
     assert len(provider.calls) == 1 and result["tool_attempt_count"] == 5
     assert all(d["source"] == "fallback" for d in result["planner_decisions"])
@@ -201,7 +201,7 @@ def test_tool_budget_terminates_with_honest_partial_summary(run_graph, connector
     result, provider, _, _ = run_graph(budgets=ExecutionBudgets(max_tool_attempts=2))
     assert result["tool_attempt_count"] == 2 and len(provider.calls) == 1
     assert result["summary"]["unresolved_evidence_gaps"] == ["limits", "fraud", "sanctions"]
-    assert result["phase"] == "escalated"
+    assert result["phase"] == "awaiting_review"
     assert not connectors["fraud"].mock_calls
     assert result["errors"][-1]["category"] == "tool_attempt_budget_exhausted"
 

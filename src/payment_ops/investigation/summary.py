@@ -59,11 +59,7 @@ def evaluate_findings(state: InvestigationState):
 
 
 def summarize_investigation(state: InvestigationState) -> InvestigationState:
-    """Stable Task 5 boundary: produce a recommendation, never human acceptance.
-
-    awaiting_review means ready for a future review node, not an interrupt in this
-    task. The compiled Task 4 workflow ends here. Escalations still need review.
-    """
+    """Produce a recommendation before review; never record human acceptance here."""
     updated = deepcopy(state)
     findings = evaluate_findings(updated)
     updated["findings"] = findings
@@ -101,7 +97,7 @@ def summarize_investigation(state: InvestigationState) -> InvestigationState:
         recommendation = "Escalate this investigation: mandatory evidence remains unavailable or uncollected."
     else:
         updated["phase"], updated["outcome_reason"] = "awaiting_review", "recommendation_ready"
-        recommendation = "Review the evidence and existing simulator finding; accept or request further investigation in the future review step."
+        recommendation = "Review the evidence and existing simulator finding; accept the investigation recommendation or request an eligible further check."
     disclaimer = "Investigation recommendation only; no permission to release, reject, cancel, settle or execute a payment."
     ids = [c["evidence_id"] for c in controls if c["evidence_id"] is not None]
     updated["recommendation"] = {
@@ -118,7 +114,7 @@ def summarize_investigation(state: InvestigationState) -> InvestigationState:
         "unresolved_evidence_gaps": gaps, "decision_engine_finding": findings,
         "autonomous_planning": updated["planning_status"],
         "recommendation": deepcopy(updated["recommendation"]),
-        "review_required": findings is not None, "human_review_implemented": False,
+        "review_required": findings is not None, "human_review_implemented": True,
         "outcome_reason": updated["outcome_reason"],
     }
     updated["pending_action"] = None
