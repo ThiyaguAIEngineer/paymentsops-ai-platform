@@ -412,3 +412,108 @@ def test_report_download_is_bound_to_snapshot_and_never_reexecutes(mounted, monk
     assert all(len(v[0].mock_calls) == 1 for v in spies.values())
     element(app.selectbox, "Select a synthetic wire payment").set_value("SYNTHETIC-WIRE-LOW-BALANCE").run()
     assert not app.get("download_button")  # cannot mislabel old case as new selection
+
+
+@pytest.fixture
+def guidance_stub(monkeypatch):
+    from payment_ops.ui import investigation_guidance as guidance
+    from payment_ops.knowledge.service import AnswerResult, Citation, EvidencePassage
+    quote = "ACCEPTED does not mean SETTLED."
+    citation = Citation(1, "Settlement and Payment Status Guide", "SYN-STATUS", "SS-STATES", "1.0.0",
+                        "test-chunk", "data/knowledge/documents/settlement_payment_status_guide.md", quote,
+                        (EvidencePassage("test-chunk", "S1", quote, 0, len(quote)),))
+    answer = AnswerResult("answered", "Acceptance does not establish settlement. [1]", (citation,),
+                          "dense", ("test-chunk",), "answered")
+    service = Mock()
+    service.ask.return_value = answer
+    factory = Mock(return_value=service)
+    monkeypatch.setattr(guidance, "_knowledge_service", factory)
+    return service, factory, answer
+
+
+def test_guidance_is_explicit_session_bound_and_preserves_review_evidence_and_budgets(mounted, guidance_stub):
+    from payment_ops.investigation.guidance import TOPICS
+    app, created, spies = mounted
+    service, factory, _ = guidance_stub
+    open_agent(app)
+    assert not any(b.label == "Find Operational Guidance" for b in app.button)
+    start(app)
+    assert not app.exception
+    before = deepcopy(snapshot(app))
+    factory.assert_not_called()
+    element(app.button, "Find Operational Guidance").click().run()
+    assert not app.exception and snapshot(app) == before
+    factory.assert_called_once()
+    service.ask.assert_called_once_with(TOPICS[0].question)
+    assert any("SYN-STATUS" in c.value for c in app.caption)
+    assert any("ACCEPTED does not mean SETTLED." in c.value for c in app.code)
+    app.run()
+    app.sidebar.radio(key="workspace_view").set_value("Wire Validation").run()
+    open_agent(app)
+    element(app.button, "Find Operational Guidance").click().run()
+    assert service.ask.call_count == 1 and snapshot(app) == before
+    assert len(created[0][1].calls) == 5 and all(len(v[0].mock_calls) == 1 for v in spies.values())
+    element(app.button, "Accept Investigation Recommendation").click().run()
+    after = deepcopy(snapshot(app))
+    app.run()
+    assert service.ask.call_count == 1 and snapshot(app) == after
+    assert after["phase"] == "completed_reviewed"
+
+
+def test_guidance_topic_and_new_run_cannot_show_old_response(mounted, guidance_stub):
+    app, _, _ = mounted
+    service, _, _ = guidance_stub
+    open_agent(app)
+    start(app)
+    element(app.button, "Find Operational Guidance").click().run()
+    # AppTest selectbox options use formatted labels; select the manual status label.
+    topic = element(app.selectbox, "Procedure topic")
+    status_label = next(v for v in topic.options if "status interpretation" in v)
+    topic.select(status_label).run()
+    assert not any("KnowledgeService status" in c.value for c in app.caption)
+    assert service.ask.call_count == 1
+    element(app.button, "Find Operational Guidance").click().run()
+    assert service.ask.call_count == 2
+    element(app.selectbox, "Select a synthetic wire payment").set_value("SYNTHETIC-WIRE-LOW-BALANCE").run()
+    assert not any(b.label == "Find Operational Guidance" for b in app.button)
+    assert "investigation_guidance_results" not in app.session_state
+    element(app.button, "Start New Investigation").click().run()
+    element(app.button, "Investigate Payment").click().run()
+    assert not app.exception
+    assert not any("KnowledgeService status" in c.value for c in app.caption)
+    assert any("Finding-related:" in s.options[0] for s in app.selectbox if s.label == "Procedure topic")
+    assert service.ask.call_count == 2
+
+
+@pytest.mark.parametrize("status", ["limited_answer", "clarification", "insufficient_evidence", "unavailable", "invalid_response", "malformed", "exception"])
+def test_guidance_failures_and_statuses_leave_investigation_unchanged(mounted, guidance_stub, status):
+    from dataclasses import replace
+    from payment_ops.investigation.guidance import NO_PROCEDURE
+    app, _, _ = mounted
+    service, factory, answer = guidance_stub
+    if status == "exception":
+        factory.side_effect = RuntimeError("SECRET provider diagnostics")
+    elif status == "malformed":
+        service.ask.return_value = {"answer": "SECRET unvalidated text"}
+    elif status == "invalid_response":
+        service.ask.return_value = replace(answer, status="insufficient_evidence", reason_code="invalid_response", answer="SECRET rejected", citations=())
+    else:
+        service.ask.return_value = replace(answer, status=status,
+            reason_code="provider_failure" if status == "unavailable" else status,
+            answer="Which scope?" if status == "clarification" else answer.answer if status == "limited_answer" else "SECRET non-answer",
+            citations=answer.citations if status == "limited_answer" else ())
+    open_agent(app)
+    start(app)
+    before = deepcopy(snapshot(app))
+    element(app.button, "Find Operational Guidance").click().run()
+    assert not app.exception and snapshot(app) == before
+    visible = [e.value for collection in (app.text, app.markdown, app.caption, app.warning, app.error, app.info, app.code)
+               for e in collection]
+    assert all("SECRET" not in str(value) for value in visible)
+    if status in {"limited_answer", "clarification"}:
+        assert any(f"KnowledgeService status: {status}" == c.value for c in app.caption)
+    else:
+        assert any(NO_PROCEDURE in w.value for w in app.warning)
+        assert not app.code
+    app.run()
+    assert snapshot(app) == before and factory.call_count == 1

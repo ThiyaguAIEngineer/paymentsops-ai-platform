@@ -7,6 +7,7 @@ import streamlit as st
 from payment_ops.investigation.review import ACCEPT, ESCALATE, FURTHER, ReviewValidationError
 from payment_ops.investigation.runtime import create_investigation_controller
 from payment_ops.investigation.report import generate_investigation_report, ReportValidationError
+from payment_ops.ui.investigation_guidance import clear_guidance, render_operational_guidance
 from payment_ops.samples.payments import SYNTHETIC_PAYMENTS
 
 
@@ -231,15 +232,18 @@ def render_investigation_agent():
         st.error(st.session_state["investigation_error"])
     state = _current_state(controller)
     if has_previous and state is None:
+        clear_guidance()
         st.warning("Investigation session or checkpoint unavailable. Start a new investigation; the previous review cannot be resumed.")
     if state is not None:
         _render_result(state)
         if selected_id != state["payment_id"]:
+            clear_guidance()
             st.info("The selected payment differs from the retained investigation. Review controls are hidden. Select its original payment or explicitly start a new investigation.")
         else:
             if not busy:
                 _render_report_download(state)
             _render_review(controller, state)
+            render_operational_guidance(state, busy=busy)
 
 
 def _render_report_download(state):

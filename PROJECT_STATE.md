@@ -1,5 +1,82 @@
 # Payment Operations Intelligence Platform — project state
 
+## Week 3 Task 9B: optional analyst-requested operational guidance
+
+Current checkpoint, November 9, 2026. Task 9A was reviewed and checkpointed locally
+as `581f572d75ee62fbf0a94c0e1f4570851ed6b129` (`feat(week3): add downloadable
+investigation case reports`); its 31 focused report/UI tests passed again in
+15.85s and staged diff checks passed before commit. Exactly its ten expected
+implementation/dependency/test/documentation files were committed. Both unrelated
+Week 2 DOCX exports were excluded. Nothing has been pushed after `90f67fe`.
+
+Task 9B implements an independent `investigation/guidance.py` adapter and
+`ui/investigation_guidance.py` section in the existing investigation workspace.
+It is analyst-initiated optional RAG, not another agent or a LangGraph tool/node.
+**Find Operational Guidance** is the only request gate. Service initialization is
+lazy and reuses the existing browser-session KnowledgeService resource. No calls
+occur during investigation, review, passive reruns or navigation. Session-owned
+results are keyed to the active run/topic; repeated requests reuse the result.
+Topic changes do not display another topic's answer. New runs, missing controller
+state or mismatched payment selection clear displayed guidance context.
+
+Corpus inspection: all six synthetic documents reviewed. The exception SOP's
+EX-TRIAGE/EX-EVIDENCE supports general triage/case-record questions for recorded
+REJECTED/REVIEW/UNAVAILABLE checks. This does not establish a specific treatment
+for balance, fraud or sanctions findings; no such dedicated SOP is present.
+Manual/general bounded topics are beneficiary correction/revalidation (BV-CORRECT),
+wire recall prerequisites versus cancellation (WR-SCOPE/WR-ELIGIBILITY), and status
+interpretation (SS-STATES). The engine does not perform the corpus's fictional
+beneficiary name/format checks or record release/settlement events, so those topics
+are not automatically asserted applicable. No insufficient-balance SOP was invented.
+
+Only fixed generic questions enter `KnowledgeService.ask`. No payment IDs, amounts,
+customer/account/beneficiary fields, review notes or whole snapshots are sent to
+RAG. A small public-envelope check rejects malformed returns; existing Week 2
+retrieval, generation, citation/quote validation and answer renderer remain intact.
+Actual answered/limited_answer/clarification/insufficient_evidence/unavailable
+statuses are preserved. Grounded answers retain original citations/passages; rejected
+or unavailable bodies are hidden. Missing support displays: "No sufficiently
+supported operational procedure was found in the available synthetic knowledge
+base." Provider/retrieval failures cannot invalidate a completed investigation.
+
+Guidance is stored outside graph state and never changes findings, evidence,
+recommendations, human-review history or budgets. It cannot override missing
+controls, authorize payment actions or create/close a case. Task 9A PDF code remains
+unchanged and guidance is on-screen only. No new dependency, corpus document,
+synthetic scenario, bank connector or UI redesign was added. Existing Week 2
+runtime configuration is required for live guidance (secure NEBIUS_API_KEY,
+NEBIUS_GENERATION_MODEL and NEBIUS_EMBEDDING_MODEL; optional NEBIUS_BASE_URL).
+INVESTIGATION_GENERATION_MODEL still affects only the agent planner.
+
+Verification: **55 focused guidance/UI tests passed in 20.34s**; **876 full offline
+tests passed in 47.13s** (839 baseline plus 28 guidance-service and 9 guidance UI
+cases). Tests use offline doubles and include the actual KnowledgeService/corpus
+validator for accepted passages and rejected model responses. Coverage includes
+unsupported topics, fixed questions/privacy, explicit-request gating, all statuses,
+provider/retrieval/malformed failures, unchanged investigation/review state, result
+reuse and new-run/topic invalidation. No Nebius calls were made.
+
+`git diff --check`, new-file whitespace and relative documentation link checks
+passed. The 97 pre-existing corpus/evaluation files retained the exact pre-suite
+aggregate content fingerprint. An existing offline CLI regression test added two
+ignored pending-output files under
+`evaluation/week2/results/answers_development/20261109T204303008133Z/`; these contain
+no new measured/live evaluation result, are not staged and do not replace saved
+evaluations. Week 1 logic, Week 2 behavior, graph/planner/review policy and finalized
+Gen Academy submission/demo files remain unchanged.
+
+PRD and Streamlit guide now document scope, setup and limitations. Final submission
+claims about optional RAG being deferred, architecture/privacy, tests, limitations
+and video sequence need revision after owner accepts the enhancements. No live
+guidance rehearsal, final upload or course submission is claimed here. Task 9B
+changes remain uncommitted; both DOCX exports are untouched and untracked.
+
+Next: owner reviews and rehearses the optional guidance, then separately scopes
+Task 9C visual redesign. No known technical blocker for 9C. Preserve explicit request
+gates, session/run isolation, literal data handling and no-payment-action boundaries.
+No automatic RAG, additional agent, MCP/A2A, write operations, persistence or React
+migration is authorized by this task. Commit/push requires later instruction.
+
 ## Week 3 Task 9A: downloadable investigation case report (November 9, 2026)
 
 This is the current checkpoint; Task 8A and older sections below are historical.

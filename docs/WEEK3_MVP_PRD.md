@@ -4,6 +4,44 @@
 **Prepared:** November 9, 2026 (America/New_York).
 **Course deadline:** November 11, 2026; exact upload cutoff/timezone is unconfirmed.
 
+## Approved amendment: Task 9B analyst-requested operational guidance
+
+Extend the investigation workspace with **Operational Guidance** and explicit
+**Find Operational Guidance**. This is an optional UI lookup, not an agent tool
+or a graph node. The validated investigation workflow, evidence, decisions,
+recommendations, budgets and human review remain unchanged; guidance stays out
+of PDF reports and graph state.
+
+The independent guidance service maps recorded adverse/unavailable engine checks
+to a general exception-triage suggestion only. Fixed manual/general topics cover
+beneficiary correction/revalidation, wire recall prerequisites and payment status
+interpretation. Corpus coverage is verified in EX-TRIAGE/EX-EVIDENCE, BV-CORRECT,
+WR-SCOPE/WR-ELIGIBILITY and SS-STATES. No balance-remediation, fraud-treatment or
+sanctions-specific SOP is supplied. Week 1 does not validate the corpus's fictional
+beneficiary-name/account-reference conventions or record release/settlement events;
+those procedures cannot be inferred as applicable from a simulator finding.
+
+Only an approved generic question is passed to `KnowledgeService.ask`; no payment
+IDs, names, accounts, beneficiary details, reviewer notes or other transaction
+fields cross that boundary. Reuse existing Dense composition, embeddings,
+generation and citation validation. Initialize the session-scoped service only
+after explicit analyst request. Retain results per active run/topic; passive reruns,
+navigation, review and repeated requests reuse results without new knowledge calls.
+New investigations, lost controller state or mismatched payment selection clear
+the displayed guidance context. No unrestricted text query is added.
+
+Preserve public statuses: answered, limited_answer, clarification,
+insufficient_evidence and unavailable. Display accepted answers/citations via the
+existing Week 2 renderer; check the public envelope without duplicating retrieval
+or grounding validation. Hide rejected/non-answer content and use the specified
+no-supported-procedure message when support is absent. Exceptions/malformed
+responses are sanitized and never invalidate the investigation. Topic coverage
+references are labeled scope notes, not fabricated retrieved citations.
+
+No new corpus, evaluation edits, automatic RAG, extra agent, payment action,
+case creation/closure, persistent store or visual redesign is authorized. Update
+final submission claims only after enhancement acceptance and refreshed evidence.
+
 ## Approved amendment: Task 9A investigation PDF report (November 9, 2026)
 
 The owner approved one read-only case-report enhancement after the verified

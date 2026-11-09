@@ -54,6 +54,54 @@ The demo payments are `SYNTHETIC-WIRE-001`, `SYNTHETIC-WIRE-LOW-BALANCE` and
 method calls. An engine finding such as REJECTED is a simulator observation;
 investigation acceptance never executes, releases, rejects, settles or changes a payment.
 
+## Optional operational guidance (Task 9B)
+
+After starting an investigation, the matching retained payment has an **Operational
+Guidance** section. Choose a bounded procedure topic, then explicitly click **Find
+Operational Guidance**. Merely investigating, reviewing, navigating or rerendering
+never calls RAG. Results and failures are retained for the active run/topic;
+repeated requests reuse the saved result. Another topic needs its own explicit
+request. A new run, lost controller or different payment selection clears displayed
+guidance. No investigation-linked results use a global shared cache.
+
+| Topic | Coverage and applicability boundary |
+| --- | --- |
+| General exception triage/case evidence | EX-TRIAGE and EX-EVIDENCE. Suggested for recorded REJECTED/REVIEW/UNAVAILABLE checks; general record requirements, not a control-specific remedy |
+| General beneficiary correction/revalidation | BV-CORRECT. Manual educational lookup only; no beneficiary-name/format failure is inferred from Week 1 fields |
+| General wire recall prerequisites | WR-SCOPE and WR-ELIGIBILITY. Manual only; no release evidence or recall eligibility is inferred |
+| General status interpretation | SS-STATES. Manual only; engine readiness/rejection does not establish a lifecycle event or settlement |
+
+There is no balance-remediation, fraud-treatment or sanctions-specific SOP in the
+six-document corpus. Unsupported topics are refused without initializing RAG.
+For missing applicable support the UI states: "No sufficiently supported operational
+procedure was found in the available synthetic knowledge base." General educational
+lookups remain clearly labeled and cannot substitute for missing control evidence.
+
+`investigation/guidance.py` sends only fixed generic questions through the existing
+`KnowledgeService.ask` public interface. It accepts no transaction snapshot in its
+lookup function. `ui/investigation_guidance.py` gates the request, lazily reuses the
+existing session-scoped KnowledgeService resource and stores results outside graph
+state. Existing Week 2 citation/quote checks and rendering remain unchanged.
+Answered and limited answers retain verified source passages and metadata;
+clarification stays a clarification. Insufficient/unavailable/rejected results show
+safe status/no-support messages. Malformed responses and provider/retrieval failures
+never expose raw exceptions or change the investigation outcome.
+
+Live guidance additionally requires the existing Week 2 configuration:
+`NEBIUS_API_KEY`, `NEBIUS_GENERATION_MODEL` and `NEBIUS_EMBEDDING_MODEL`; optional
+`NEBIUS_BASE_URL` is shared. `INVESTIGATION_GENERATION_MODEL` overrides only the
+agent planner, not KnowledgeService. Configure secrets securely before launch,
+restart after changes, and keep them out of recordings. No new dependency is added.
+First guidance lookup can take longer while models and the local embedding/index
+composition initialize; missing configuration produces safe unavailable guidance.
+
+This optional on-screen result does not enter payment evidence, recommendations,
+human review or the Task 9A PDF. Guidance does not execute payment or case actions.
+Authenticated live guidance acceptance remains a separate owner rehearsal. After
+acceptance, revise the final submission's optional-RAG/deferred claims, architecture,
+privacy boundary, test count, limitations and video sequence; those finalized files
+are deliberately unchanged during Task 9B.
+
 ## Session and safety boundaries
 
 ### Downloadable investigation case report (Task 9A)
