@@ -1,5 +1,89 @@
 # Payment Operations Intelligence Platform — project state
 
+## Week 3 Task 8A: submission preparation checkpoint (November 9, 2026)
+
+This is the current checkpoint. Sections below retain Week 1/Week 2 history and
+their original scope; older statements that no Week 3 scope exists or that the app
+has only two views are historical. Week 1 remains frozen. Week 2 implementation,
+saved evaluations and owner-recorded demonstration are complete for course
+progression; its human quality review and formal latency qualification remain
+outstanding, with no new scores or sign-off inferred.
+
+Week 3 implementation is complete on `feat/week3-payment-investigation-agent`,
+local HEAD `ac85a7e152c0e698d8e2428fb2cf0c3623181bb2` at this documentation checkpoint.
+The existing synthetic samples, connector contracts/mocks, payment engine and
+Week 2 logic/corpus/evaluations are reused unchanged. LangGraph 1.2.20 is locked.
+The original MVP PRD remains a proposal/history document; implemented details in
+this checkpoint and the submission report supersede its optional/planned behavior.
+
+Actual architecture: Streamlit's third Workspace view creates a session-owned
+controller and in-memory checkpointer, loads the selected synthetic payment,
+loops through Nebius JSON action planning and read-only StructuredTool dispatch,
+records evidence/errors and builds deterministic findings/recommendations, then
+pauses at genuine LangGraph `interrupt()`. Validated `Command(resume=...)` resumes
+the same thread. A human-requested connector check executes directly without
+restarting the planner, increments recommendation revision and interrupts again.
+Payment lookup is application-controlled; only the four evidence tools and
+`finish` are planner choices. Optional agent RAG guidance is deferred; the existing
+Knowledge Assistant remains a separate workspace.
+
+Important decisions: immutable payment binding; strict JSON schema/action allowlist
+and eligibility; mandatory-control completion before model finish; deterministic
+payment evaluation; current evidence separate from append-only history; sanitized
+failures; visibly degraded fallback; recommendation-only human review with stale,
+duplicate and concurrent response protection. No payment mutation action exists.
+Bounds remain 7 tool attempts, 8 planner attempts, 180 active seconds (soft limit),
+2 review rounds and one shared extra connector attempt for recovery OR human
+recheck. Without optional guidance the normal five initial attempts plus one extra
+total six, even though the configured cap is seven. Review waiting does not consume
+active time. Reviewer identity is not authenticated; restart loses session state.
+
+Verification in Task 8A: `uv run --locked pytest -q` -> **824 passed in 37.48s**.
+This is the full offline suite across Weeks 1/2/3, including graph/controller/tool,
+LangGraph smoke and 16 investigation UI tests; injected providers are test-only.
+No Nebius calls were made in documentation preparation. `git diff --check` and
+relative documentation link checks passed. No code, synthetic data, golden files
+or saved evaluation outputs changed.
+
+Owner-reported live acceptance evidence supplied in Task 8A (not new Codex runs):
+
+- A, `SYNTHETIC-WIRE-001`: five model decisions, lookup plus four successful
+  connectors, all controls passed, READY FOR PROCESSING; accepted recommendation;
+  completed and reviewed, with tool attempts remaining five.
+- B, `SYNTHETIC-WIRE-LOW-BALANCE`: initial Core action succeeded; second planner
+  attempt recorded `planner_timeout`; deterministic fallback gathered remaining
+  evidence. Insufficient balance correctly produced REJECTED. Human Core recheck
+  retained state, raised attempts to six and recommendation revision to two,
+  exhausted the shared extra-check budget and reached second review. Planning
+  remained degraded. No final terminal outcome is confirmed. This supplied
+  diagnostic resolves Task 7B's previously unknown failure category, but does not
+  establish the underlying provider/network root cause.
+- C, `SYNTHETIC-WIRE-UNAVAILABLE`: five model decisions; Fraud
+  `connector_unavailable`, other controls completed, missing Fraud evidence retained,
+  MANUAL REVIEW; human End and Escalate; final escalated, five attempts, one review round.
+
+Known limits: model timeout/variability; no formal Week 3 latency or held-out
+reliability benchmark; three rehearsals are not a percentage success estimate.
+No saved live trace archive was supplied for independent replay verification.
+No persistent cross-session memory, production audit store, authenticated reviewer,
+real bank connectivity or payment execution. Existing Week 2 quality gaps remain.
+
+Submission assets prepared: `docs/WEEK3_GEN_ACADEMY_SUBMISSION.md` and
+`docs/WEEK3_GEN_ACADEMY_DEMO_SCRIPT.md` (target approximately 4:30, under five minutes).
+Final Week 3 recording/upload/link, Google Doc creation/sharing, GitHub finalization
+and course submission are unconfirmed. The prior 4:58 video belongs to Week 2.
+No commit or push is authorized in Task 8A; the two unrelated DOCX exports remain
+untracked and excluded. Actual course submission must be confirmed by the owner.
+
+Next task: owner reviews these assets, confirms course cutoff/timezone and portal
+requirements for November 11, 2026, records/uploads the Week 3 demo, shares required
+document/video links, separately authorizes Git commit/push, verifies remote links,
+submits and records confirmation. Do not merge into the default branch.
+Deferred/out of scope: new agent features, optional RAG integration, multi-agent
+architecture, MCP/A2A, persistent memory, external banking APIs, payment execution,
+AWS deployment and production authentication. Later diagnostic/evaluation work
+requires separate authorization; do not weaken safety boundaries to improve demos.
+
 ## Task 21: Week 2 course submission checkpoint (November 9, 2026)
 
 This checkpoint supersedes earlier pending-rehearsal statements below. Week 2
@@ -702,7 +786,7 @@ Real banking integrations, payment execution/release, authentication, databases,
 API servers, AWS infrastructure, RAG, LLMs, and AI agents. No additional banking
 rules, production controls, or Week 2 features were implemented.
 
-## Next task
+## Historical Week 2 next task (superseded for active Week 3 work)
 
 Finalize course delivery: verify the Task 21 documentation commit on the remote
 feature branch, confirm Google Doc creation/sharing, upload the 4:58 video and
