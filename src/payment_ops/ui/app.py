@@ -120,11 +120,15 @@ def render_wire_validation() -> None:
 def main() -> None:
     st.set_page_config(page_title="Payment Operations Intelligence Platform", page_icon="🏦", layout="wide")
     st.title("Payment Operations Intelligence Platform")
-    view = st.sidebar.radio("Workspace", ["Wire Validation", "Knowledge Assistant"], key="workspace_view")
+    view = st.sidebar.radio("Workspace", ["Wire Validation", "Knowledge Assistant", "Payment Investigation Agent"], key="workspace_view")
     if view == "Knowledge Assistant":
         # Lazy import keeps Week 1 startup independent of RAG configuration.
         from payment_ops.ui.knowledge_view import render_knowledge_assistant
         render_knowledge_assistant()
+    elif view == "Payment Investigation Agent":
+        from payment_ops.ui.investigation_view import render_investigation_agent
+
+        render_investigation_agent()
     else:
         render_wire_validation()
 
