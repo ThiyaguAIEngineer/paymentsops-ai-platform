@@ -1,5 +1,49 @@
 # Payment Operations Intelligence Platform — project state
 
+## Task 21: Week 2 course submission checkpoint (November 9, 2026)
+
+This checkpoint supersedes earlier pending-rehearsal statements below. Week 2
+implementation and saved automated development evaluations are complete. Submission
+documentation is complete in docs/WEEK2_GEN_ACADEMY_SUBMISSION.md, with the timed
+recording guide in docs/WEEK2_GEN_ACADEMY_DEMO_SCRIPT.md.
+
+The owner reports successful authenticated rehearsal and demonstration of all four
+scenarios: Q02 (ACCEPTED versus settled), Q03 (SYN-BEN-301 first action), Q08 (ACH
+correction and case evidence), and Q13 (unknown-code abstention). Q08 variability
+was observed during rehearsal; no detailed response comparison or new scored run
+was supplied, so this observation does not alter frozen evaluation results or
+establish procedural completeness. The owner recorded a 4:58 demonstration video;
+external upload is pending and no video URL has been provided. This is owner-reported
+live demonstration evidence, not a new provider execution by Codex or formal UI sign-off.
+
+Submission asset status:
+
+- Markdown submission and demo script: complete and reviewed for repository consistency.
+- Google Doc: creation/sharing status and URL are unconfirmed; local DOCX files do
+  not establish that a Google Doc has been created or shared.
+- GitHub finalization: the three documentation assets are authorized for a dedicated
+  commit/push to feat/week2-knowledge-assistant in Task 21. The resulting hash and
+  remote verification are reported after execution; this checkpoint does not itself
+  assert that a pending push has succeeded. No merge into main is authorized.
+- Demo video: recorded at 4:58, pending external upload/link verification.
+- Course submission: not confirmed submitted; final Google Doc/video links and
+  external course submission confirmation remain outstanding.
+
+Human answerable-claim faithfulness (target >=90%), procedural completeness,
+answer relevance and semantic citation correctness remain unmeasured. Q05/Q07/Q20
+completeness findings still require adjudication. The formal >=100-query warm
+latency benchmark remains outstanding; saved P95 is 12.775s, above the 12s target.
+A successful rehearsal does not change those measurements or constitute formal
+quality sign-off. The submission and demo remain synthetic educational artifacts.
+
+Next: verify the documentation commit on the remote feature branch, finalize/share
+the Google Doc, upload the video, verify accessible submission links and complete
+course submission. Separately complete human review and latency qualification or
+explicit acceptance before formal Week 2 closure and owner-confirmed roadmap work.
+Out of scope: application changes, new RAG/Week 3 agentic features, corpus/gold/result
+changes, generated evaluation output commits, Nebius calls in Task 21, and merging
+into main. Week 1 remains frozen.
+
 ## Current phase
 
 Week 2 implementation and curated live development evaluation are complete.
@@ -633,7 +677,8 @@ Week 1 remains complete and frozen at 04f29e2. Week 2 implementation and curated
 live evaluations are complete; formal closure is pending human claim/procedural,
 answer-relevance and semantic-citation review, Q05/Q07/Q20 completeness adjudication,
 and latency-target qualification or explicit owner acceptance. See the final report.
-Authenticated UI acceptance has not been recorded in the available artifacts.
+The owner has reported successful four-scenario live demonstration (Task 21);
+formal UI acceptance/sign-off is still not recorded.
 Current Codex process credentials are not needed for this documentation-only task;
 no new Nebius evaluation was run. Archived/conflict fixtures and held-out evaluation
 remain deferred. Original PRD/separate handoff/next-week specification are unavailable
@@ -659,11 +704,13 @@ rules, production controls, or Week 2 features were implemented.
 
 ## Next task
 
-Complete the official Task 17C human claim/completeness review on a separate copy
-of `evaluation/week2/results/answers_development/20261029T181352053697Z`.
-Verify atomic segmentation, reviewer coverage and all supported/partial/unsupported
-judgments; record relevance/semantic-citation assessments and adjudicate Q05/Q07/
-Q20 omissions against the frozen profile. Do not alter gold/SOPs to improve scores.
-Then resolve or explicitly accept the latency/UI-acceptance gaps and record formal
-Week 2 sign-off before confirming the next roadmap stage with the owner. Task 17D
-stops after documentation/reporting; no unnecessary live rerun or automatic commit.
+Finalize course delivery: verify the Task 21 documentation commit on the remote
+feature branch, confirm Google Doc creation/sharing, upload the 4:58 video and
+verify its link, then record course submission status. No merge into main.
+
+Separately complete the official Task 17C human claim/completeness review on a
+separate copy of the saved curated run. Confirm atomic segmentation, reviewer
+coverage, relevance/semantic-citation assessments and Q05/Q07/Q20 adjudication.
+Do not alter gold/SOPs to improve scores. Complete or explicitly accept the formal
+latency benchmark gap and record Week 2 sign-off before owner-confirmed roadmap
+work. No new implementation, provider calls or evaluation changes in Task 21.
