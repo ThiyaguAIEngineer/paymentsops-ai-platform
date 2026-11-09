@@ -64,6 +64,8 @@ class PlannerDecision(TypedDict):
     action: str
     reason: str
     source: Literal["model", "fallback"]
+    decision_id: str
+    planner_call_number: int
 
 
 class ErrorRecord(TypedDict):
@@ -104,6 +106,8 @@ class InvestigationState(TypedDict):
     current_evidence: dict[Control, EvidenceRecord]
     tool_attempts: list[ToolAttempt]
     planner_decisions: list[PlannerDecision]
+    planning_status: Literal["not_run", "running", "succeeded", "degraded"]
+    summary: dict[str, JSONValue] | None
     errors: list[ErrorRecord]
     pending_action: str | None
     tool_attempt_count: int
@@ -146,6 +150,7 @@ def new_investigation_state(*, run_id: str, thread_id: str, payment_id: str) -> 
         attempted_controls=[], completed_controls=[], failed_controls=[],
         remaining_controls=list(CONTROLS), unresolved_controls=list(CONTROLS),
         current_evidence={}, tool_attempts=[], planner_decisions=[], errors=[],
+        planning_status="not_run", summary=None,
         pending_action=None, tool_attempt_count=0, planner_call_count=0,
         extra_connector_attempt_used=False, guidance_used=False, review_round_count=0,
         active_elapsed_seconds=0.0, findings=None,
