@@ -2,16 +2,18 @@
 
 **Mastering Agentic AI - Gen Academy Week 3 submission report**
 
-**Prepared:** November 9, 2026; certification deadline November 11, 2026.
+**Updated:** November 11, 2026; certification deadline November 11, 2026, 11:50 PM PST.
 
 **Project:** PaymentOps AI Platform
 
 **Branch:** `feat/week3-payment-investigation-agent`
 
-**Implementation checkpoint:** `ac85a7e152c0e698d8e2428fb2cf0c3623181bb2`
+**Implementation checkpoints:** `581f572` (PDF), `a3b316d` (SOP guidance),
+`0c2237b` (console presentation); original integration `ac85a7e`.
 
-**Status:** Implementation and owner-reported live rehearsals complete; final recording,
-external delivery links, GitHub finalization and actual course submission remain unconfirmed.
+**Status:** Enhanced implementation and owner-reported final live acceptance complete.
+Final recording/upload, external delivery links and actual course submission remain
+unconfirmed. Git finalization is tracked in PROJECT_STATE.md and the final handoff.
 
 ## 1. Executive summary
 
@@ -62,8 +64,9 @@ Different valid tool orders can reach the same deterministic finding.
 
 RAG answers operational knowledge questions; it does not by itself gather a
 selected payment's connector evidence or maintain a reviewable investigation.
-The Week 2 assistant remains available separately. Procedure retrieval within the
-agent was optional in the PRD and is **not implemented**. Fixed-order fallback is
+The Week 2 assistant remains available separately. Optional analyst-requested
+procedure retrieval now reuses its KnowledgeService outside the agent graph; it is
+not a planner tool or automatic investigation step. Fixed-order fallback is
 implemented as safe degradation, not represented as autonomous planning success.
 
 ## 5. Synthetic dataset and payment scenarios
@@ -90,6 +93,8 @@ fixtures do not establish compliance with real banking policy.
 | Nebius / httpx | Existing model-verifying JSON chat adapter; separate Week 3 instance |
 | Streamlit | Third Workspace view, session-owned controller, evidence and review UI |
 | Existing PaymentOps components | Immutable samples, connector contracts/mocks and deterministic decision engine |
+| ReportLab / pypdf | Snapshot-only PDF rendering / offline PDF validation |
+| Existing Week 2 KnowledgeService | Explicit, bounded SOP guidance using the synthetic corpus |
 | pytest / Streamlit AppTest | Offline injected-provider, real graph/mock and UI regression coverage |
 
 Model selection uses `INVESTIGATION_GENERATION_MODEL`, falling back to
@@ -116,6 +121,9 @@ flowchart TD
     H -->|Eligible further check plus note| J[Invoke exactly one requested connector]
     J --> G
     I --> K[Completed and reviewed OR escalated]
+    U[Explicit analyst request in Streamlit] --> R[Existing Week 2 KnowledgeService: generic SOP question]
+    R --> V[Separate guidance panel with citations]
+    S[Ready matching controller snapshot] --> P[Validate/project report and render PDF bytes]
 ```
 
 The actual graph nodes are `load_payment`, `plan_next`, `execute_tool`,
@@ -253,10 +261,11 @@ and remains responsible for review, recording and submission.
 
 ## 14. Automated test methodology and current result
 
-On November 9, 2026, `uv run --locked pytest -q` verified **824 passed** across the
-repository. This is an offline regression result, including existing Week 1/Week 2
-tests, LangGraph smoke coverage, investigation backend tests and 16 investigation
-Streamlit tests. It is not 824 independent live-model acceptance tests.
+On November 11, 2026, `uv run --locked pytest -q` verified **878 passed** across the
+repository (final run **56.27 seconds**; pre-documentation run 60.52 seconds). This offline
+regression includes Week 1/Week 2, LangGraph, investigation backend, PDF, optional
+guidance and Streamlit presentation tests. It is not 878 live-model acceptance tests.
+Both runs passed; the final verification is also recorded in PROJECT_STATE.md.
 
 Investigation tests inject deterministic scripted providers into real graph/controller
 execution with actual mock connectors. Coverage includes alternate valid tool orders,
@@ -268,8 +277,9 @@ datasets, corpus and saved evaluations are unchanged.
 
 ## 15. Owner-reported live acceptance scenarios
 
-These observations are supplied by the owner in Task 8A, not rerun by Codex for this
-report. No saved live trace archive was supplied for independent replay verification.
+The following original scenario observations were supplied by the owner in Task 8A,
+not rerun by Codex for this report. Final enhanced acceptance is recorded in section 20.
+No saved live trace archive was supplied for independent replay verification.
 
 | Scenario | Observed evidence | Confirmed investigation outcome |
 | --- | --- | --- |
@@ -304,7 +314,8 @@ visible: successful evidence gathering does not erase a planner timeout.
 
 Potential later work includes richer allowlisted provider diagnostics, broader
 held-out planner evaluation and latency measurement, durable checkpoint storage,
-authenticated review/audit controls, and optional bounded RAG procedure guidance.
+authenticated review/audit controls, and broader separately reviewed SOP coverage.
+Bounded optional guidance and PDF export are implemented as described below.
 Any changes need separate design and authorization. Multi-agent design, MCP, A2A,
 external banking APIs, payment execution, AWS deployment and production authentication
 are outside this course MVP.
@@ -312,8 +323,8 @@ are outside this course MVP.
 ## 19. Repository, reproduction and submission instructions
 
 Repository: [ThiyaguAIEngineer/paymentsops-ai-platform](https://github.com/ThiyaguAIEngineer/paymentsops-ai-platform).
-Select branch `feat/week3-payment-investigation-agent` after authorized GitHub
-finalization; this report does not assert that the Week 3 branch is already pushed.
+Submission branch: [feat/week3-payment-investigation-agent](https://github.com/ThiyaguAIEngineer/paymentsops-ai-platform/tree/feat/week3-payment-investigation-agent).
+The final handoff records the verified remote commit.
 See the [Streamlit guide](WEEK3_STREAMLIT.md),
 [recording script](WEEK3_GEN_ACADEMY_DEMO_SCRIPT.md),
 [project state](../PROJECT_STATE.md), [tests](../tests/investigation/test_graph.py)
@@ -330,12 +341,94 @@ uv run streamlit run src/payment_ops/ui/app.py --browser.gatherUsageStats=false
 Configure `NEBIUS_API_KEY` securely in the launching process and select a model with
 `INVESTIGATION_GENERATION_MODEL` or fallback `NEBIUS_GENERATION_MODEL` before live
 planning. Optional `NEBIUS_BASE_URL` defaults to `https://api.tokenfactory.nebius.com/v1`.
-No embedding model is needed for this agent view. Restart after environment changes;
+Planner-only investigation needs no embedding model. Optional SOP guidance also
+requires the existing Week 2 `NEBIUS_GENERATION_MODEL` and
+`NEBIUS_EMBEDDING_MODEL` configuration. Restart after environment changes;
 do not expose credentials in recordings or documents.
 
-Before November 11: review documentation, authorize commit/push separately, verify
-remote branch and accessible links, record a video under five minutes, upload it,
-prepare/share any required Google Doc, confirm course portal requirements and cutoff
-timezone, submit and retain confirmation. Video/Google Doc URLs and actual course
+Before November 11, 2026, 11:50 PM PST: verify accessible delivery links, record a
+video under five minutes, upload it, prepare/share any required Google Doc, submit
+through the course portal and retain confirmation. Video/Google Doc URLs and actual course
 submission are not yet confirmed. Repository links describe the configured project
 destination; external availability must be checked during finalization.
+
+
+## 20. Final enhanced implementation and acceptance
+
+### PDF Investigation Case Report architecture and export
+
+[report.py](../src/payment_ops/investigation/report.py) validates and detaches the
+controller snapshot into frozen report sections; [report_pdf.py](../src/payment_ops/investigation/report_pdf.py)
+renders PDF bytes with ReportLab independently of Streamlit. The download appears
+only for a ready snapshot matching the selected payment. Awaiting review is labeled
+**provisional**; completed, escalated and failed outcomes retain their recorded
+status. Export includes control findings, current/historical evidence references,
+model/fallback provenance, attempts/errors, gaps, recommendation revision and human
+review history, including an accepted review when recorded. Missing fields remain
+not recorded. It performs no rule reevaluation, model/connector call or graph resume.
+The download uses precomputed bytes and `on_click="ignore"`; it does not mutate
+investigation state. Guidance is on-screen only and is not part of the PDF.
+
+### Existing Week 2 RAG integration and citation scope
+
+[guidance.py](../src/payment_ops/investigation/guidance.py) and the investigation
+panel lazily reuse the existing session-cached Week 2 **KnowledgeService** and
+answer renderer. **Find Operational Guidance** is the explicit request gate;
+passive rendering, investigation execution and human review do not request RAG.
+Only fixed generic questions cross the service boundary: no payment ID, amount,
+customer/account/beneficiary data or review notes. Results are retained per active
+run/topic and cleared when that context is lost or replaced. Guidance stays outside
+LangGraph state and cannot alter findings, evidence, review history or budgets.
+
+Accepted answers preserve original document, section, version and supporting
+passages. Existing Week 2 source membership, version and exact quote/passage checks
+remain in use; the adapter checks the public response envelope. Displayed citations
+were reported in owner acceptance. These mechanical checks and reported observations are **not formal semantic citation verification**, a
+faithfulness score or proof that every procedure applies to the selected payment.
+
+### Unsupported topics and safe failure
+
+Available bounded topics are general exception triage/case evidence, beneficiary
+correction/revalidation, recall prerequisites versus cancellation, and payment
+status interpretation. Adverse/unavailable controls may suggest general triage;
+there is no dedicated insufficient-balance remediation, fraud-treatment or
+sanctions-specific SOP. Manual general topics do not establish payment-specific
+applicability, recall eligibility or settlement. Unsupported topics, insufficient
+support, malformed responses and provider/retrieval failures fail safely with:
+
+> No sufficiently supported operational procedure was found in the available synthetic knowledge base.
+
+Actual answer/limited-answer/clarification/insufficient-evidence/unavailable statuses
+remain distinct. Rejected/unavailable bodies are hidden and a guidance failure
+cannot invalidate or reopen a completed investigation. No SOP content was invented.
+
+### Enterprise Streamlit presentation
+
+The console uses a native light navy/slate theme, consistent workspace headings,
+readable metric/control cards and text-labeled statuses, a visible synthetic-data
+notice, and dedicated review, report and optional guidance panels. **Agent activity
+and evidence** expands the ordered AI-selected versus deterministic-fallback actions,
+execution outcomes, evidence references and errors. Evidence completeness is separate
+from control approval. Scoped repository CSS supports wrapping and responsive layout;
+model/data text remains literal native text or HTML-disabled Markdown. Historical
+Task 9C offline layout checks covered 1440/1024/768px, not full accessibility or
+cross-browser certification. See the [Streamlit guide](WEEK3_STREAMLIT.md).
+
+### Owner-reported final live acceptance
+
+The owner supplied these final observations for the enhanced application; Codex did
+not execute a new live investigation or independently replay an archived trace:
+
+- `SYNTHETIC-WIRE-001` completed with **five model-selected planning decisions**,
+  **five tool attempts** (lookup plus four connectors) and **four mandatory connector
+  controls evidenced**.
+- The human accepted the recommendation; final status was **Completed and reviewed**.
+- The final downloaded PDF was verified, including the accepted review history.
+- Optional SOP guidance answered using the existing synthetic knowledge corpus and
+  displayed citations. No formal semantic citation assessment is claimed.
+- No payment execution or modification occurred.
+
+Scenario B's earlier `planner_timeout` and bounded fallback/recheck, and Scenario C's
+unavailable-Fraud escalation remain valid limitations and test evidence (section 15).
+They are not replaced by this successful run. No production readiness or measured
+live reliability percentage is claimed. Course submission remains pending.

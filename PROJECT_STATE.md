@@ -1,5 +1,96 @@
 # Payment Operations Intelligence Platform — project state
 
+## Final Week 3 submission preparation ? November 11, 2026
+
+This is the active project state; Task 9A/9B/9C and Week 1/Week 2 entries below are
+historical checkpoints. Their then-current uncommitted/push/next-task statements
+are superseded here. **Gen Academy submission is not completed.** Deadline:
+November 11, 2026, 11:50 PM PST.
+
+### Final architecture and implemented enhancements
+
+One Streamlit console retains Week 1 deterministic wire validation and Week 2 RAG,
+plus one bounded Week 3 LangGraph investigation agent. Nebius selects allowlisted,
+payment-bound read-only mock connector tools; code validates dispatch and evaluates
+existing payment rules. Stateful evidence/attempt history, explicit model/fallback
+provenance, bounded failures and genuine interrupt/resume support human review.
+Session-local InMemorySaver is not persistent storage. No payment is executed or
+modified.
+
+Task 9A PDF export validates/projects a detached snapshot and renders with ReportLab;
+provisional/final lifecycle, evidence, errors, recommendation and human-review history
+are preserved without new provider/tool calls or state mutation. Task 9B optional
+**Find Operational Guidance** reuses the existing Week 2 KnowledgeService on explicit
+analyst request, sends fixed generic questions without transaction data, retains
+citations/passages per run/topic, and stays outside graph state and the PDF. Task 9C
+adds consistent enterprise-style native Streamlit theming, metric/control cards,
+review/report/guidance panels and expandable activity/evidence with explicit status
+and source labels. No new feature work is authorized in finalization.
+
+### Git and verification
+
+Verified branch: `feat/week3-payment-investigation-agent`. Task 9A is committed as
+`581f572d75ee62fbf0a94c0e1f4570851ed6b129`; Task 9B as
+`a3b316d5b40a1ce1478e5abb7abb55fe0906fab9`. Reviewed and locally checkpointed Task 9C
+as `0c2237b`; a trailing blank line in the theme file was removed to pass the staged
+whitespace check. No application behavior was changed during this finalization.
+Both unrelated Week 2 DOCX exports remain untouched and excluded from commits.
+
+November 11 pre-documentation verification: `uv run --locked pytest -q` ? **878
+passed in 60.52s**. Final post-documentation full offline run: **878 passed in
+56.27s** using the same command. `git diff --check` passed; 16 relative link targets
+in the submission/demo/state/Streamlit guides resolve. Read-only origin access
+confirmed the repository and existing branch. Reviewed file contents and secret
+patterns showed no accidental credentials or unrelated artifacts. Both excluded
+DOCX files retained their pre-finalization SHA-256 hashes. Secret-pattern inspection is not a formal security audit.
+Final documentation commit and push target only the existing feature branch; no
+force-push or merge into master is authorized. The final handoff records the actual
+push result, remote/local HEAD comparison and working-tree status.
+
+### Owner-reported final live acceptance
+
+The owner reports `SYNTHETIC-WIRE-001` completed successfully: five model-selected
+planning decisions, five tool attempts (lookup plus four connectors), all four
+mandatory connector controls evidenced, human acceptance and **Completed and
+reviewed** status. The final PDF was verified including accepted review history.
+SOP guidance answered from the existing synthetic corpus with displayed citations.
+No payment execution or modification occurred. These are owner observations, not
+a new Codex-run live test or independently replayed trace.
+
+### Known limitations and deferred capabilities
+
+Retain Scenario B's `planner_timeout`, bounded fallback, Core recheck, six attempts,
+revision two and second review; terminal outcome was not confirmed. Retain Scenario
+C's unavailable Fraud evidence and safe escalation. One successful run establishes
+no measured live success rate or production readiness. Model latency remains variable.
+Guidance lacks dedicated balance-remediation, fraud-treatment and sanctions-specific
+SOPs; unsupported/insufficient/provider-failure results fail safely without changing
+the investigation. Source/version/quote checks and displayed citations do not
+establish formal semantic citation quality or faithfulness. Historical Week 2 human
+quality review and formal latency qualification remain outstanding.
+
+Deferred: durable checkpoints, authenticated reviewers/audit controls, broader
+held-out reliability/latency evaluation and reviewed SOP coverage. Real banking
+APIs, payment execution, deployment, multi-agent/MCP/A2A and a frontend migration
+remain outside this submission. Historical layout checks covered 768/1024/1440px;
+full accessibility and cross-browser certification remain unqualified.
+
+### Submission deliverables and next task
+
+- [Final submission report](docs/WEEK3_GEN_ACADEMY_SUBMISSION.md): detailed original
+  architecture/history preserved, with final PDF, RAG, safety, UI and acceptance sections.
+- [Final demo script](docs/WEEK3_GEN_ACADEMY_DEMO_SCRIPT.md): 4:30 target, acceptable
+  4:15-4:40, strictly under five minutes; one successful investigation plus guidance
+  and PDF, with honest previous-result/wait-cut labeling.
+- [Streamlit guide](docs/WEEK3_STREAMLIT.md) and existing tests/source on the
+  [Week 3 branch](https://github.com/ThiyaguAIEngineer/paymentsops-ai-platform/tree/feat/week3-payment-investigation-agent).
+
+**Next task: actual course submission.** Finish/verify the Week 3 recording, upload
+and test video/report sharing links, submit through the course portal before the
+stated deadline, and retain owner confirmation. Recording/upload/shared-document
+URLs and portal completion have not been supplied. Do not mark certification or
+course submission complete. No further application development is required here.
+
 ## Week 3 Task 9C: Payment Operations Intelligence Console presentation
 
 Current checkpoint, November 9, 2026. Before UI work, verified branch
