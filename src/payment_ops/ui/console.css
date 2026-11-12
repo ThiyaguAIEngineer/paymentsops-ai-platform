@@ -1,0 +1,43 @@
+/* Scoped to application-owned keys; no generated hash classes or remote assets. */
+.st-key-paymentops_console { max-width: 1440px; margin-inline: auto; }
+.st-key-paymentops_console h1 { letter-spacing: -0.035em; }
+.st-key-paymentops_console h2, .st-key-paymentops_console h3 { letter-spacing: -0.015em; }
+.st-key-paymentops_console [data-testid="stText"] { overflow-wrap: anywhere; }
+.st-key-paymentops_console [data-testid="stVerticalBlockBorderWrapper"] {
+  background: #ffffff; border-radius: 12px;
+}
+.st-key-paymentops_console [data-testid="stMetric"] { padding: 0.15rem 0.1rem; }
+.st-key-paymentops_console [data-testid="stMetricValue"] { font-size: 1.45rem; font-weight: 650; }
+.st-key-paymentops_console [data-testid="stMetricValue"] * { white-space: normal; overflow-wrap: anywhere; }
+.st-key-paymentops_console [data-testid="stMetricLabel"] { color: #43566c; }
+.st-key-paymentops_console [data-testid="stMetricLabel"],
+.st-key-paymentops_console [data-testid="stMetricLabel"] * {
+  white-space: normal !important; overflow: visible; text-overflow: clip;
+}
+.st-key-paymentops_console [data-testid="stCaptionContainer"] p,
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p { color: #52637a; }
+.st-key-paymentops_console .st-key-control_findings [data-testid="stVerticalBlockBorderWrapper"],
+.st-key-investigation_review_panel, .st-key-investigation_guidance_panel { background: #ffffff; }
+.st-key-paymentops_console button { min-height: 2.65rem; }
+.st-key-paymentops_console :is(button, input, textarea, [role="combobox"]):focus-visible {
+  outline: 3px solid #345d83; outline-offset: 3px;
+}
+.st-key-paymentops_console details { background: white; border-radius: 10px; }
+.st-key-paymentops_console pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.st-key-console_brand { border-bottom: 1px solid #ccd7e3; padding-bottom: 1rem; margin-bottom: 1rem; }
+@media (max-width: 1100px) {
+  :is(.st-key-kpi_wire, .st-key-kpi_investigation) [data-testid="stHorizontalBlock"] {
+    flex-wrap: wrap; gap: 0.75rem;
+  }
+  :is(.st-key-kpi_wire, .st-key-kpi_investigation) [data-testid="stColumn"] {
+    min-width: 155px; flex: 1 1 155px;
+  }
+}
+@media (max-width: 800px) {
+  :is(.st-key-kpi_wire, .st-key-kpi_investigation) [data-testid="stColumn"] { min-width: 240px; flex: 1 1 240px; }
+  .st-key-control_findings [data-testid="stHorizontalBlock"] { flex-wrap: wrap; }
+  .st-key-control_findings [data-testid="stColumn"] { min-width: 240px; flex: 1 1 240px; }
+  .st-key-paymentops_console h1 { font-size: 1.65rem; }
+  .st-key-paymentops_console [data-testid="stMetricValue"] { font-size: 1.2rem; }
+  .st-key-paymentops_console [data-testid="stText"] { font-size: 0.92rem; }
+}

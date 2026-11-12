@@ -1,8 +1,83 @@
-# Week 3 Payment Investigation Agent: Streamlit integration
+# PaymentOps Intelligence Console: Streamlit guide
 
 The existing application now has a third **Workspace** option,
 **Payment Investigation Agent**. Wire Validation remains the default; Knowledge
 Assistant keeps its existing interface and backend.
+
+## Console presentation (Task 9C)
+
+The shared shell is now branded **Payment Operations Intelligence Console** with a
+clearly visible **SYNTHETIC DEMONSTRATION ENVIRONMENT** notice, three unchanged
+workspace choices and read-only mock-integration boundaries. Native Streamlit theme
+settings live in `.streamlit/config.toml`; repository-owned scoped CSS lives in
+`src/payment_ops/ui/console.css`. Small `presentation.py` helpers provide page
+headers, metric cards and native status/check rows. No frontend build system,
+custom JavaScript, external font/CDN or new runtime dependency is introduced.
+
+The light navy/slate/white palette uses readable labels with every status color:
+green Passed, amber Needs review, red Rejected/blocked and gray Unavailable/Not
+performed/Unknown. The theme sets typography and borders; CSS handles long-reference
+wrapping, responsive KPI rows and visible keyboard focus. Selectors use application-
+owned container keys and a few native component test IDs, not generated hash
+classes. Those native selectors should be rechecked when Streamlit is upgraded.
+All data/model/reviewer content remains in native text, code or HTML-disabled
+Markdown. Only the trusted local stylesheet enters `st.html`.
+
+Investigation layout now follows selection -> overview -> control findings ->
+recommendation/review -> report -> optional guidance -> detailed activity/evidence.
+Overview metrics show only stored facts: selected run amount, simulator finding,
+investigation lifecycle, usable mandatory controls and gaps. Evidence progress is
+not payment approval. The recommendation and dedicated review panel retain all
+three actions, revision/session validation and check-budget explanations.
+**Investigation report** states provisional versus a final recorded outcome.
+**Operational Guidance** remains a separate opt-in panel.
+
+Open **Agent activity and evidence** for the actual ordered AI-selected/fallback
+cards, linked execution outcome/evidence/error, comparison tables, connector results
+and recorded failures. Table detail may scroll within its native container. Unknown
+or unavailable screening never becomes a passing badge. Wire Validation keeps its
+same counts, filter and selected-payment behavior, with KPI cards, a filter panel,
+control rows and an expandable comparison table. Knowledge Assistant keeps its
+existing form/result/citation contracts, with consistent headings and clearer
+supporting-source scope notes. Expanding sources never requests another answer.
+
+Restart Streamlit after changing theme configuration. Launch from the repository
+root with the existing command below. No new environment variables are required.
+
+### Visual and owner acceptance
+
+Task 9C used an ignored, explicitly labeled offline fixture entry point with real
+UI/graph/mocks and scripted model/service doubles, blocking external HTTP. Headless
+Chrome captured all eight states below at 1440, 1024 and 768 pixels: 24 viewport/state
+checks detected no page-level horizontal overflow. Representative screenshots and
+section details were visually inspected; a clipped environment badge and KPI labels
+were corrected. Keyboard focus was inspected as a visible 3px outline. These are
+offline layout checks, not a live Nebius rehearsal or a full accessibility audit.
+
+| Owner check | Acceptance expectation |
+| --- | --- |
+| Wire Validation | Same KPIs/filter/selection; readable table and recorded control explanations |
+| Knowledge answer with citations | Answer/refusal status distinct; expand source/version and original passage without another call |
+| Investigation before start | Selected details and explicit Investigate Payment; no automatic model/tool activity |
+| Completed investigation | Stored completed lifecycle distinct from simulator readiness; final recorded-outcome PDF label |
+| Awaiting review | Recommendation/revision and three bounded review actions; provisional PDF label |
+| Fraud-unavailable escalation | Gray unavailable control, explicit missing Fraud evidence and recorded connector failure |
+| Supported operational guidance | Explicit request, bounded topic, status and verified passages separate from payment evidence |
+| Insufficient guidance | Exact no-supported-procedure message; investigation/review/evidence unchanged |
+
+Before recording, repeat these checks in the owner's browser at all three widths,
+including sidebar open/closed at tablet width. Tab through native controls and
+check focus, readable wrapped labels, no clipping/overlap, and table-local scrolling.
+Exercise acceptance, one eligible recheck/second review, End and Escalate, guidance
+and PDF download on the actual session; compare tool/planner counts before and
+after non-investigation actions. No payment action is available. Live response
+latency, browser differences, zoom/screen-reader use and formal accessibility
+conformance remain unqualified. Below 768 pixels is outside the tested range.
+
+After owner visual/live acceptance, refresh final submission screenshots, navigation
+instructions, PDF/guidance architecture claims and test counts, and rehearse the
+video timing. The finalized Gen Academy submission report and demo script remain
+unchanged in Task 9C; no course submission is claimed.
 
 ## Launch and model configuration
 
@@ -34,8 +109,9 @@ bounded deterministic fallback; they do not establish autonomous success.
 
 1. Select an existing synthetic wire. Selection and navigation perform no agent I/O.
 2. Click **Investigate Payment**. A spinner covers execution through the real
-   LangGraph review interrupt. Inspect lifecycle, model/fallback action sequence,
-   normalized tool results, attempt/evidence IDs, errors, gaps and simulator findings.
+   LangGraph review interrupt. Inspect overview, control findings and recommendation;
+   open Agent activity and evidence for model/fallback sequence, normalized results,
+   attempt/evidence IDs and recorded errors. Gaps and simulator findings remain distinct.
 3. **Accept Investigation Recommendation** resumes the same thread. Missing
    evidence or degraded planning permits acknowledgment only and remains escalated.
 4. To recheck, select an eligible connector, enter a short note and click

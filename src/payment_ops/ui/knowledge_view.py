@@ -5,6 +5,7 @@ import streamlit as st
 from payment_ops.knowledge.runtime import create_knowledge_service
 from payment_ops.knowledge.generation import GenerationError
 from payment_ops.knowledge.service import AnswerResult, DISCLOSURE, KnowledgeService
+from payment_ops.ui.presentation import page_header
 
 
 @st.cache_resource(show_spinner=False, scope="session")
@@ -49,6 +50,7 @@ def render_answer(answer: AnswerResult) -> None:
     st.markdown(format_answer_markdown(answer.answer), unsafe_allow_html=False)
     if answer.citations:
         st.subheader("Sources")
+        st.caption("Supporting passages retain their original source, section and version. Citation checks do not by themselves establish semantic correctness.")
         for citation in answer.citations:
             st.text(f"[{citation.number}] {citation.document_title}")
             st.caption(f"{citation.document_id} · Section {citation.section_id} · Version {citation.document_version}")
@@ -59,13 +61,13 @@ def render_answer(answer: AnswerResult) -> None:
 
 
 def render_knowledge_assistant() -> None:
-    st.subheader("Knowledge Assistant")
+    page_header("Knowledge Assistant", "Find synthetic operational guidance and inspect the passages supporting each answer.", eyebrow="02 / ASK")
     st.caption(DISCLOSURE)
     st.write("Ask about documented payment procedures, exceptions, statuses, or synthetic error codes.")
     st.caption("Use synthetic examples only. This assistant cannot inspect live payments or execute actions.")
-    with st.form("knowledge_question_form"):
+    with st.form("knowledge_question_form", border=True):
         question = st.text_area("Question", key="knowledge_question", placeholder="What does ACCEPTED mean?")
-        submitted = st.form_submit_button("Ask", key="knowledge_ask")
+        submitted = st.form_submit_button("Ask", key="knowledge_ask", type="primary")
     if submitted:
         for key in ("knowledge_result", "knowledge_answered_question", "knowledge_error"):
             st.session_state.pop(key, None)

@@ -9,6 +9,7 @@ from payment_ops.investigation.runtime import create_investigation_controller
 from payment_ops.investigation.report import generate_investigation_report, ReportValidationError
 from payment_ops.ui.investigation_guidance import clear_guidance, render_operational_guidance
 from payment_ops.samples.payments import SYNTHETIC_PAYMENTS
+from payment_ops.ui.presentation import page_header, metric_cards, control_findings
 
 
 CONTROL_LABELS = {"core": "Core Banking", "limits": "Limits", "fraud": "Fraud", "sanctions": "Sanctions"}
@@ -50,7 +51,7 @@ def _current_state(controller):
 
 
 def _render_result(state):
-    st.subheader("Investigation results")
+    st.subheader("Investigation overview")
     st.text(f"Investigation payment: {state['payment_id']}")
     st.caption(f"Run: {state['run_id']} | Thread: {state['thread_id']}")
     phase = state["phase"]
@@ -71,16 +72,67 @@ def _render_result(state):
     else:
         st.caption(f"Planning: {state['planning_status']}")
     st.caption(f"Tool attempts: {state['tool_attempt_count']} | Planner attempts: {state['planner_call_count']} | Review rounds: {state['review_round_count']}")
+    lifecycle = {"awaiting_review": "Awaiting review", "completed_reviewed": "Completed and reviewed",
+                 "escalated": "Escalated", "failed": "Failed"}.get(phase, phase.replace("_", " ").title())
+    findings = state["findings"] or {}
+    usable = len(CONTROL_LABELS) - len(state["unresolved_controls"])
+    metric_cards([
+        ("Payment amount (USD)", (state["payment_snapshot"] or {}).get("amount") or "Not recorded"),
+        ("Simulator finding", findings.get("decision", "Not available")),
+        ("Investigation status", lifecycle),
+        ("Controls with usable evidence", f"{usable} / {len(CONTROL_LABELS)}"),
+        ("Evidence gaps", len(state["unresolved_controls"])),
+    ], key="kpi_investigation")
+    st.progress(usable / len(CONTROL_LABELS), text="Usable mandatory-control evidence; completeness is separate from control approval.")
+    if state["unresolved_controls"]:
+        st.warning("Missing usable evidence: " + ", ".join(CONTROL_LABELS[c] for c in state["unresolved_controls"]))
 
+    st.subheader("Deterministic simulator findings")
+    if state["findings"] is None:
+        st.info("No payment validation finding is available for this investigation.")
+    else:
+        st.text(f"Simulator finding: {state['findings']['decision']}")
+        st.text(state["findings"]["primary_reason"])
+        control_findings(state["findings"]["checks"])
+        with st.expander("Control comparison table"):
+            st.dataframe([{
+                "Control": c["area"], "Status": c["status"], "Reasons": " ".join(c["reasons"]),
+            } for c in state["findings"]["checks"]], hide_index=True, width="stretch")
+    st.subheader("Investigation recommendation")
+    st.text(state["recommendation"]["text"] or "No recommendation is available.")
+    st.caption(f"Recommendation revision: {state['recommendation']['revision']}")
+    if state["human_review"]["acknowledgment_only"]:
+        st.warning("Acceptance recorded as acknowledgment only; escalation remains required.")
+    if state["human_review"]["events"]:
+        st.subheader("Human review history")
+        st.dataframe(state["human_review"]["events"], hide_index=True, width="stretch")
+
+
+def _render_activity(state):
+    st.subheader("Agent activity timeline")
+    st.caption("AI-selected action and Deterministic fallback are recorded separately. Explanations are validated display text, not private model reasoning.")
     st.subheader("Action sequence")
     decisions = state["planner_decisions"]
     model_tools = [d["action"] for d in decisions if d["source"] == "model" and d["action"] != "finish"]
     st.text("Model-selected tool sequence: " + (" -> ".join(model_tools) or "No model-selected tools"))
     if decisions:
+        attempts_by_request = {a["request_id"]: a for a in state["tool_attempts"]}
+        for index, decision in enumerate(decisions, 1):
+            execution = _execution_display(attempts_by_request.get(decision["decision_id"]), decision["action"])
+            with st.container(border=True):
+                source = "AI-selected action" if decision["source"] == "model" else "Deterministic fallback"
+                st.text(f"{index:02d} / {source} / {decision['action']}")
+                st.caption(execution["Execution"])
+                if execution["Evidence reference"]:
+                    st.text("Evidence reference: " + execution["Evidence reference"])
+                if execution["Recorded error"]:
+                    st.text("Recorded error: " + execution["Recorded error"])
         st.dataframe([{
             "Step": i, "Action": d["action"],
             "Source": "Model" if d["source"] == "model" else "Deterministic fallback",
+            "Selection": "AI-selected action" if d["source"] == "model" else "Deterministic fallback",
             "Explanation": d["reason"],
+            **_execution_display(attempts_by_request.get(d["decision_id"]), d["action"]),
         } for i, d in enumerate(decisions, 1)], hide_index=True, width="stretch")
 
     st.subheader("Tool execution history")
@@ -117,23 +169,15 @@ def _render_result(state):
     else:
         st.caption("All mandatory controls have usable current evidence.")
 
-    st.subheader("Deterministic simulator findings")
-    if state["findings"] is None:
-        st.info("No payment validation finding is available for this investigation.")
-    else:
-        st.text(f"Simulator finding: {state['findings']['decision']}")
-        st.text(state["findings"]["primary_reason"])
-        st.dataframe([{
-            "Control": c["area"], "Status": c["status"], "Reasons": " ".join(c["reasons"]),
-        } for c in state["findings"]["checks"]], hide_index=True, width="stretch")
-    st.subheader("Investigation recommendation")
-    st.text(state["recommendation"]["text"] or "No recommendation is available.")
-    st.caption(f"Recommendation revision: {state['recommendation']['revision']}")
-    if state["human_review"]["acknowledgment_only"]:
-        st.warning("Acceptance recorded as acknowledgment only; escalation remains required.")
-    if state["human_review"]["events"]:
-        st.subheader("Human review history")
-        st.dataframe(state["human_review"]["events"], hide_index=True, width="stretch")
+
+def _execution_display(attempt, action):
+    if attempt is None:
+        return {"Execution": "No tool dispatch (finish)" if action == "finish" else "No recorded dispatch",
+                "Evidence reference": "", "Recorded error": ""}
+    return {"Execution": "Evidence retrieved" if attempt["success"] else "Unavailable / failed",
+            "Evidence reference": attempt["attempt_id"],
+            "Recorded error": (attempt["error"] or {}).get("category", "")}
+
 
 
 def _render_review(controller, state):
@@ -182,21 +226,23 @@ def _render_review(controller, state):
 
 
 def render_investigation_agent():
-    st.subheader("Payment Investigation Agent")
+    page_header("Payment Investigation", "Gather read-only control evidence, review the recommendation and retain a clear investigation record.", eyebrow="03 / INVESTIGATE")
     st.caption("Synthetic educational data only. Read-only investigation; completion is not payment authorization.")
     st.caption("State lasts only in this browser session and running application. Lost checkpoints require a new investigation.")
     if "investigation_selected_payment" not in st.session_state:
         st.session_state["investigation_selected_payment"] = st.session_state.get(
             "investigation_payment_choice", SYNTHETIC_PAYMENTS[0].payment_id,
         )
+    st.subheader("Select a payment")
     selected_id = st.selectbox("Select a synthetic wire payment", [p.payment_id for p in SYNTHETIC_PAYMENTS], key="investigation_selected_payment")
     # Widget keys may be cleaned up when another workspace renders. Retain the
     # chosen ID separately so navigation does not silently select another wire.
     st.session_state["investigation_payment_choice"] = selected_id
     payment = next(p for p in SYNTHETIC_PAYMENTS if p.payment_id == selected_id)
-    st.table([{"Payment reference": selected_id, "Amount": str(payment.amount),
-               "Payment date": payment.payment_date.isoformat() if payment.payment_date else "Missing",
-               "Beneficiary": payment.beneficiary_name or "Missing"}])
+    with st.container(border=True):
+        st.text(selected_id)
+        st.caption(f"Selected amount (USD): {payment.amount} | Instruction date: {payment.payment_date.isoformat() if payment.payment_date else 'Missing'}")
+        st.text("Beneficiary: " + (payment.beneficiary_name or "Missing"))
 
     controller = st.session_state.get("investigation_controller")
     has_previous = controller is not None or "investigation_identity" in st.session_state
@@ -208,7 +254,7 @@ def render_investigation_agent():
     if has_previous:
         st.button("Start New Investigation", key="investigation_arm_new", on_click=_arm_new_investigation, disabled=busy)
         st.caption("To replace the retained trace, choose a payment, select Start New Investigation, then Investigate Payment.")
-    submitted = st.button("Investigate Payment", key=f"investigation_start_{token}", disabled=not armed)
+    submitted = st.button("Investigate Payment", key=f"investigation_start_{token}", disabled=not armed, type="primary")
     if submitted and armed:
         # Consume this start event before I/O. The next render has a different
         # widget identity and cannot replay an old/double-clicked start event.
@@ -231,6 +277,8 @@ def render_investigation_agent():
     if "investigation_error" in st.session_state:
         st.error(st.session_state["investigation_error"])
     state = _current_state(controller)
+    if not has_previous:
+        st.info("Investigation not started. Select an instruction and explicitly choose Investigate Payment.")
     if has_previous and state is None:
         clear_guidance()
         st.warning("Investigation session or checkpoint unavailable. Start a new investigation; the previous review cannot be resumed.")
@@ -240,10 +288,16 @@ def render_investigation_agent():
             clear_guidance()
             st.info("The selected payment differs from the retained investigation. Review controls are hidden. Select its original payment or explicitly start a new investigation.")
         else:
+            with st.container(border=True, key="investigation_review_panel"):
+                _render_review(controller, state)
             if not busy:
-                _render_report_download(state)
-            _render_review(controller, state)
-            render_operational_guidance(state, busy=busy)
+                with st.container(border=True):
+                    st.subheader("Investigation report")
+                    _render_report_download(state)
+            with st.container(border=True, key="investigation_guidance_panel"):
+                render_operational_guidance(state, busy=busy)
+        with st.expander("Agent activity and evidence", expanded=False):
+            _render_activity(state)
 
 
 def _render_report_download(state):
@@ -258,6 +312,8 @@ def _render_report_download(state):
         return
     if state["phase"] == "awaiting_review":
         st.caption("Provisional report: human review is pending; this is not a final investigation outcome.")
+    elif state["phase"] in {"completed_reviewed", "escalated", "failed"}:
+        st.caption("Final report of the recorded investigation outcome. This does not authorize a payment action.")
     st.download_button(
         "Download Investigation Report", data=pdf, mime="application/pdf",
         file_name=f"PaymentOps-Investigation-{state['run_id']}.pdf",

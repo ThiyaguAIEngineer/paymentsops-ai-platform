@@ -1,5 +1,85 @@
 # Payment Operations Intelligence Platform — project state
 
+## Week 3 Task 9C: Payment Operations Intelligence Console presentation
+
+Current checkpoint, November 9, 2026. Before UI work, verified branch
+`feat/week3-payment-investigation-agent`, inspected Task 9B changes, reran its
+55 focused tests (**20.45s**), checked/staged exactly its eight expected files and
+created local checkpoint **`a3b316d5b40a1ce1478e5abb7abb55fe0906fab9`**
+(`feat(week3): add opt-in operational guidance to investigations`). The two DOCX
+exports were excluded. No push occurred. HEAD remains that checkpoint; Task 9C
+presentation changes are uncommitted.
+
+The Streamlit application now presents a consistent navy/slate/light PaymentOps
+console. `.streamlit/config.toml` provides the native theme; `ui/console.css`
+contains scoped styling; `ui/presentation.py` supplies small native page-header,
+metric-card and status/check-row helpers. Three Workspace choices, original widget
+keys and explicit action boundaries are retained. Sidebar and main content clearly
+identify the synthetic demonstration environment and no real bank connectivity.
+No new runtime dependency, frontend build framework, custom JavaScript or remote
+font/CDN asset was added. Temporary Playwright tooling lives only in ignored local QA.
+
+Investigation presentation: concise selection details and explicit primary start;
+actual amount, simulator finding, lifecycle, usable-evidence and gap metrics;
+labeled evidence progress (not approval); text-plus-color control cards; prominent
+recommendation/revision; bordered human-review and guidance panels; provisional
+versus final recorded-outcome report labeling. Agent activity/evidence is available
+in a native expander, with ordered AI-selected/fallback cards, linked execution
+status, evidence references/errors and original detailed tables/results. Finish
+is explicitly not a tool dispatch. Missing/unavailable screening never becomes PASS.
+
+Wire Validation retains all same KPIs, filtering, selected-payment behavior and
+service processing, with native KPI cards, filter panel, control rows and expandable
+comparison detail. Knowledge Assistant retains its form/result/refusal/citation
+contracts, with shared headers and clearer source scope notes. The SOP guidance
+service and PDF renderer are unchanged. No payment rules, RAG prompts/retrieval,
+graph transitions, planner policy, tool permissions, budgets or review safeguards
+were modified. Data/model/reviewer text stays in native text/code or HTML-disabled
+Markdown. Only trusted repository CSS enters `st.html`.
+
+Verification: **86 focused UI tests passed in 40.85s**; **878 full offline tests
+passed in 51.84s**. The two added tests check literal hostile text, unknown/unavailable
+status presentation and HTML-disabled knowledge rendering. Existing navigation,
+selection, explicit start, no repeated calls, real review/resume, failures, opt-in
+guidance and PDF tests passed unchanged except the intentional new console-title
+assertion. `git diff --check`, new-file whitespace and relative doc-link checks passed.
+
+Visual acceptance used an ignored offline Streamlit fixture entry point on a
+separate local port, real UI/graph/mocks, scripted model/service doubles and blocked
+external HTTP. Headless Chrome captured the eight requested states at **1440,
+1024 and 768px** (24 viewport/state checks): wire dashboard, cited knowledge answer,
+pre-start investigation, completed investigation, awaiting review, Fraud-unavailable
+escalation, supported guidance and insufficient guidance. No page-level horizontal
+overflow was detected. Representative screenshots across these states/widths were
+visually inspected, including expanded sources and timeline cards. A truncated
+sidebar badge and KPI labels were corrected. Keyboard focus was inspected as a
+3px outline; an actual offline browser PDF download yielded valid PDF bytes and
+unchanged attempt counts. No Nebius calls occurred. This is not authenticated live
+acceptance, cross-browser certification or a formal accessibility audit.
+
+All 99 pre-existing corpus/evaluation files remain byte-unchanged against the
+pre-task fingerprint. The existing offline CLI regression added two new ignored
+pending report files under
+`evaluation/week2/results/answers_development/20261109T210115269002Z/`, with no new
+measured/live results. No corpus, golden data or saved measured evaluation changed.
+Finalized Gen Academy submission/demo files remain untouched. No Task 9C files
+are staged or committed; no push/merge. Both unrelated DOCX exports are untouched.
+
+Known UI limits: dense native tables may scroll inside their own containers;
+tablet navigation uses Streamlit's collapsible sidebar; below 768px and full
+screen-reader/zoom/browser compatibility are unqualified. CSS uses application-owned
+container keys and a few native test IDs, which require rechecking on Streamlit
+upgrades. Theme changes require application restart. No invented dashboard metrics,
+case actions, monitoring or payment authorization controls were added.
+
+Next: owner restarts the regular app, performs the Streamlit guide's eight-state
+visual checklist at all widths and rehearses real investigation/recheck/escalation,
+guidance and download behavior with existing credentials kept off-screen. After
+acceptance, update the final course report/demo architecture, PDF/guidance claims,
+navigation/screenshots, test counts and recording timing. Actual video upload,
+shared-document links and course submission still require owner confirmation.
+Further commit/push requires instruction; no new backend work is authorized here.
+
 ## Week 3 Task 9B: optional analyst-requested operational guidance
 
 Current checkpoint, November 9, 2026. Task 9A was reviewed and checkpointed locally
