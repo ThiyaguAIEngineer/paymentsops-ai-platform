@@ -1,5 +1,401 @@
 # Payment Operations Intelligence Platform — project state
 
+## Final Week 3 submission preparation ? November 11, 2026
+
+This is the active project state; Task 9A/9B/9C and Week 1/Week 2 entries below are
+historical checkpoints. Their then-current uncommitted/push/next-task statements
+are superseded here. **Gen Academy submission is not completed.** Deadline:
+November 11, 2026, 11:50 PM PST.
+
+### Final architecture and implemented enhancements
+
+One Streamlit console retains Week 1 deterministic wire validation and Week 2 RAG,
+plus one bounded Week 3 LangGraph investigation agent. Nebius selects allowlisted,
+payment-bound read-only mock connector tools; code validates dispatch and evaluates
+existing payment rules. Stateful evidence/attempt history, explicit model/fallback
+provenance, bounded failures and genuine interrupt/resume support human review.
+Session-local InMemorySaver is not persistent storage. No payment is executed or
+modified.
+
+Task 9A PDF export validates/projects a detached snapshot and renders with ReportLab;
+provisional/final lifecycle, evidence, errors, recommendation and human-review history
+are preserved without new provider/tool calls or state mutation. Task 9B optional
+**Find Operational Guidance** reuses the existing Week 2 KnowledgeService on explicit
+analyst request, sends fixed generic questions without transaction data, retains
+citations/passages per run/topic, and stays outside graph state and the PDF. Task 9C
+adds consistent enterprise-style native Streamlit theming, metric/control cards,
+review/report/guidance panels and expandable activity/evidence with explicit status
+and source labels. No new feature work is authorized in finalization.
+
+### Git and verification
+
+Verified branch: `feat/week3-payment-investigation-agent`. Task 9A is committed as
+`581f572d75ee62fbf0a94c0e1f4570851ed6b129`; Task 9B as
+`a3b316d5b40a1ce1478e5abb7abb55fe0906fab9`. Reviewed and locally checkpointed Task 9C
+as `0c2237b`; a trailing blank line in the theme file was removed to pass the staged
+whitespace check. No application behavior was changed during this finalization.
+Both unrelated Week 2 DOCX exports remain untouched and excluded from commits.
+
+November 11 pre-documentation verification: `uv run --locked pytest -q` ? **878
+passed in 60.52s**. Final post-documentation full offline run: **878 passed in
+56.27s** using the same command. `git diff --check` passed; 16 relative link targets
+in the submission/demo/state/Streamlit guides resolve. Read-only origin access
+confirmed the repository and existing branch. Reviewed file contents and secret
+patterns showed no accidental credentials or unrelated artifacts. Both excluded
+DOCX files retained their pre-finalization SHA-256 hashes. Secret-pattern inspection is not a formal security audit.
+Final documentation commit and push target only the existing feature branch; no
+force-push or merge into master is authorized. The final handoff records the actual
+push result, remote/local HEAD comparison and working-tree status.
+
+### Owner-reported final live acceptance
+
+The owner reports `SYNTHETIC-WIRE-001` completed successfully: five model-selected
+planning decisions, five tool attempts (lookup plus four connectors), all four
+mandatory connector controls evidenced, human acceptance and **Completed and
+reviewed** status. The final PDF was verified including accepted review history.
+SOP guidance answered from the existing synthetic corpus with displayed citations.
+No payment execution or modification occurred. These are owner observations, not
+a new Codex-run live test or independently replayed trace.
+
+### Known limitations and deferred capabilities
+
+Retain Scenario B's `planner_timeout`, bounded fallback, Core recheck, six attempts,
+revision two and second review; terminal outcome was not confirmed. Retain Scenario
+C's unavailable Fraud evidence and safe escalation. One successful run establishes
+no measured live success rate or production readiness. Model latency remains variable.
+Guidance lacks dedicated balance-remediation, fraud-treatment and sanctions-specific
+SOPs; unsupported/insufficient/provider-failure results fail safely without changing
+the investigation. Source/version/quote checks and displayed citations do not
+establish formal semantic citation quality or faithfulness. Historical Week 2 human
+quality review and formal latency qualification remain outstanding.
+
+Deferred: durable checkpoints, authenticated reviewers/audit controls, broader
+held-out reliability/latency evaluation and reviewed SOP coverage. Real banking
+APIs, payment execution, deployment, multi-agent/MCP/A2A and a frontend migration
+remain outside this submission. Historical layout checks covered 768/1024/1440px;
+full accessibility and cross-browser certification remain unqualified.
+
+### Submission deliverables and next task
+
+- [Final submission report](docs/WEEK3_GEN_ACADEMY_SUBMISSION.md): detailed original
+  architecture/history preserved, with final PDF, RAG, safety, UI and acceptance sections.
+- [Final demo script](docs/WEEK3_GEN_ACADEMY_DEMO_SCRIPT.md): 4:30 target, acceptable
+  4:15-4:40, strictly under five minutes; one successful investigation plus guidance
+  and PDF, with honest previous-result/wait-cut labeling.
+- [Streamlit guide](docs/WEEK3_STREAMLIT.md) and existing tests/source on the
+  [Week 3 branch](https://github.com/ThiyaguAIEngineer/paymentsops-ai-platform/tree/feat/week3-payment-investigation-agent).
+
+**Next task: actual course submission.** Finish/verify the Week 3 recording, upload
+and test video/report sharing links, submit through the course portal before the
+stated deadline, and retain owner confirmation. Recording/upload/shared-document
+URLs and portal completion have not been supplied. Do not mark certification or
+course submission complete. No further application development is required here.
+
+## Week 3 Task 9C: Payment Operations Intelligence Console presentation
+
+Current checkpoint, November 9, 2026. Before UI work, verified branch
+`feat/week3-payment-investigation-agent`, inspected Task 9B changes, reran its
+55 focused tests (**20.45s**), checked/staged exactly its eight expected files and
+created local checkpoint **`a3b316d5b40a1ce1478e5abb7abb55fe0906fab9`**
+(`feat(week3): add opt-in operational guidance to investigations`). The two DOCX
+exports were excluded. No push occurred. HEAD remains that checkpoint; Task 9C
+presentation changes are uncommitted.
+
+The Streamlit application now presents a consistent navy/slate/light PaymentOps
+console. `.streamlit/config.toml` provides the native theme; `ui/console.css`
+contains scoped styling; `ui/presentation.py` supplies small native page-header,
+metric-card and status/check-row helpers. Three Workspace choices, original widget
+keys and explicit action boundaries are retained. Sidebar and main content clearly
+identify the synthetic demonstration environment and no real bank connectivity.
+No new runtime dependency, frontend build framework, custom JavaScript or remote
+font/CDN asset was added. Temporary Playwright tooling lives only in ignored local QA.
+
+Investigation presentation: concise selection details and explicit primary start;
+actual amount, simulator finding, lifecycle, usable-evidence and gap metrics;
+labeled evidence progress (not approval); text-plus-color control cards; prominent
+recommendation/revision; bordered human-review and guidance panels; provisional
+versus final recorded-outcome report labeling. Agent activity/evidence is available
+in a native expander, with ordered AI-selected/fallback cards, linked execution
+status, evidence references/errors and original detailed tables/results. Finish
+is explicitly not a tool dispatch. Missing/unavailable screening never becomes PASS.
+
+Wire Validation retains all same KPIs, filtering, selected-payment behavior and
+service processing, with native KPI cards, filter panel, control rows and expandable
+comparison detail. Knowledge Assistant retains its form/result/refusal/citation
+contracts, with shared headers and clearer source scope notes. The SOP guidance
+service and PDF renderer are unchanged. No payment rules, RAG prompts/retrieval,
+graph transitions, planner policy, tool permissions, budgets or review safeguards
+were modified. Data/model/reviewer text stays in native text/code or HTML-disabled
+Markdown. Only trusted repository CSS enters `st.html`.
+
+Verification: **86 focused UI tests passed in 40.85s**; **878 full offline tests
+passed in 51.84s**. The two added tests check literal hostile text, unknown/unavailable
+status presentation and HTML-disabled knowledge rendering. Existing navigation,
+selection, explicit start, no repeated calls, real review/resume, failures, opt-in
+guidance and PDF tests passed unchanged except the intentional new console-title
+assertion. `git diff --check`, new-file whitespace and relative doc-link checks passed.
+
+Visual acceptance used an ignored offline Streamlit fixture entry point on a
+separate local port, real UI/graph/mocks, scripted model/service doubles and blocked
+external HTTP. Headless Chrome captured the eight requested states at **1440,
+1024 and 768px** (24 viewport/state checks): wire dashboard, cited knowledge answer,
+pre-start investigation, completed investigation, awaiting review, Fraud-unavailable
+escalation, supported guidance and insufficient guidance. No page-level horizontal
+overflow was detected. Representative screenshots across these states/widths were
+visually inspected, including expanded sources and timeline cards. A truncated
+sidebar badge and KPI labels were corrected. Keyboard focus was inspected as a
+3px outline; an actual offline browser PDF download yielded valid PDF bytes and
+unchanged attempt counts. No Nebius calls occurred. This is not authenticated live
+acceptance, cross-browser certification or a formal accessibility audit.
+
+All 99 pre-existing corpus/evaluation files remain byte-unchanged against the
+pre-task fingerprint. The existing offline CLI regression added two new ignored
+pending report files under
+`evaluation/week2/results/answers_development/20261109T210115269002Z/`, with no new
+measured/live results. No corpus, golden data or saved measured evaluation changed.
+Finalized Gen Academy submission/demo files remain untouched. No Task 9C files
+are staged or committed; no push/merge. Both unrelated DOCX exports are untouched.
+
+Known UI limits: dense native tables may scroll inside their own containers;
+tablet navigation uses Streamlit's collapsible sidebar; below 768px and full
+screen-reader/zoom/browser compatibility are unqualified. CSS uses application-owned
+container keys and a few native test IDs, which require rechecking on Streamlit
+upgrades. Theme changes require application restart. No invented dashboard metrics,
+case actions, monitoring or payment authorization controls were added.
+
+Next: owner restarts the regular app, performs the Streamlit guide's eight-state
+visual checklist at all widths and rehearses real investigation/recheck/escalation,
+guidance and download behavior with existing credentials kept off-screen. After
+acceptance, update the final course report/demo architecture, PDF/guidance claims,
+navigation/screenshots, test counts and recording timing. Actual video upload,
+shared-document links and course submission still require owner confirmation.
+Further commit/push requires instruction; no new backend work is authorized here.
+
+## Week 3 Task 9B: optional analyst-requested operational guidance
+
+Current checkpoint, November 9, 2026. Task 9A was reviewed and checkpointed locally
+as `581f572d75ee62fbf0a94c0e1f4570851ed6b129` (`feat(week3): add downloadable
+investigation case reports`); its 31 focused report/UI tests passed again in
+15.85s and staged diff checks passed before commit. Exactly its ten expected
+implementation/dependency/test/documentation files were committed. Both unrelated
+Week 2 DOCX exports were excluded. Nothing has been pushed after `90f67fe`.
+
+Task 9B implements an independent `investigation/guidance.py` adapter and
+`ui/investigation_guidance.py` section in the existing investigation workspace.
+It is analyst-initiated optional RAG, not another agent or a LangGraph tool/node.
+**Find Operational Guidance** is the only request gate. Service initialization is
+lazy and reuses the existing browser-session KnowledgeService resource. No calls
+occur during investigation, review, passive reruns or navigation. Session-owned
+results are keyed to the active run/topic; repeated requests reuse the result.
+Topic changes do not display another topic's answer. New runs, missing controller
+state or mismatched payment selection clear displayed guidance context.
+
+Corpus inspection: all six synthetic documents reviewed. The exception SOP's
+EX-TRIAGE/EX-EVIDENCE supports general triage/case-record questions for recorded
+REJECTED/REVIEW/UNAVAILABLE checks. This does not establish a specific treatment
+for balance, fraud or sanctions findings; no such dedicated SOP is present.
+Manual/general bounded topics are beneficiary correction/revalidation (BV-CORRECT),
+wire recall prerequisites versus cancellation (WR-SCOPE/WR-ELIGIBILITY), and status
+interpretation (SS-STATES). The engine does not perform the corpus's fictional
+beneficiary name/format checks or record release/settlement events, so those topics
+are not automatically asserted applicable. No insufficient-balance SOP was invented.
+
+Only fixed generic questions enter `KnowledgeService.ask`. No payment IDs, amounts,
+customer/account/beneficiary fields, review notes or whole snapshots are sent to
+RAG. A small public-envelope check rejects malformed returns; existing Week 2
+retrieval, generation, citation/quote validation and answer renderer remain intact.
+Actual answered/limited_answer/clarification/insufficient_evidence/unavailable
+statuses are preserved. Grounded answers retain original citations/passages; rejected
+or unavailable bodies are hidden. Missing support displays: "No sufficiently
+supported operational procedure was found in the available synthetic knowledge
+base." Provider/retrieval failures cannot invalidate a completed investigation.
+
+Guidance is stored outside graph state and never changes findings, evidence,
+recommendations, human-review history or budgets. It cannot override missing
+controls, authorize payment actions or create/close a case. Task 9A PDF code remains
+unchanged and guidance is on-screen only. No new dependency, corpus document,
+synthetic scenario, bank connector or UI redesign was added. Existing Week 2
+runtime configuration is required for live guidance (secure NEBIUS_API_KEY,
+NEBIUS_GENERATION_MODEL and NEBIUS_EMBEDDING_MODEL; optional NEBIUS_BASE_URL).
+INVESTIGATION_GENERATION_MODEL still affects only the agent planner.
+
+Verification: **55 focused guidance/UI tests passed in 20.34s**; **876 full offline
+tests passed in 47.13s** (839 baseline plus 28 guidance-service and 9 guidance UI
+cases). Tests use offline doubles and include the actual KnowledgeService/corpus
+validator for accepted passages and rejected model responses. Coverage includes
+unsupported topics, fixed questions/privacy, explicit-request gating, all statuses,
+provider/retrieval/malformed failures, unchanged investigation/review state, result
+reuse and new-run/topic invalidation. No Nebius calls were made.
+
+`git diff --check`, new-file whitespace and relative documentation link checks
+passed. The 97 pre-existing corpus/evaluation files retained the exact pre-suite
+aggregate content fingerprint. An existing offline CLI regression test added two
+ignored pending-output files under
+`evaluation/week2/results/answers_development/20261109T204303008133Z/`; these contain
+no new measured/live evaluation result, are not staged and do not replace saved
+evaluations. Week 1 logic, Week 2 behavior, graph/planner/review policy and finalized
+Gen Academy submission/demo files remain unchanged.
+
+PRD and Streamlit guide now document scope, setup and limitations. Final submission
+claims about optional RAG being deferred, architecture/privacy, tests, limitations
+and video sequence need revision after owner accepts the enhancements. No live
+guidance rehearsal, final upload or course submission is claimed here. Task 9B
+changes remain uncommitted; both DOCX exports are untouched and untracked.
+
+Next: owner reviews and rehearses the optional guidance, then separately scopes
+Task 9C visual redesign. No known technical blocker for 9C. Preserve explicit request
+gates, session/run isolation, literal data handling and no-payment-action boundaries.
+No automatic RAG, additional agent, MCP/A2A, write operations, persistence or React
+migration is authorized by this task. Commit/push requires later instruction.
+
+## Week 3 Task 9A: downloadable investigation case report (November 9, 2026)
+
+This is the current checkpoint; Task 8A and older sections below are historical.
+Started from verified branch `feat/week3-payment-investigation-agent`, HEAD
+`90f67fe59eaf7a48bdc8c5e96589776fc3dcae6a`. Only the two expected unrelated Week 2
+DOCX exports were untracked. Task 8B committed/pushed the Week 3 implementation and
+submission documents at that hash; course submission remains unconfirmed.
+
+Approved enhancement implemented: `investigation/report.py` validates the detached
+controller snapshot and projects frozen report sections; `report_pdf.py` renders
+PDF bytes with ReportLab, independent of Streamlit. The view offers **Download
+Investigation Report** only for a ready snapshot matching the selected payment.
+Pending human review is prominently provisional. Completed, escalated and failed
+investigations retain their actual stored lifecycle and outcome.
+
+Contents include synthetic payment/run references, simulator finding and account,
+balance, limits, fraud and sanctions results; current and historical evidence IDs;
+model/fallback action provenance; tool attempts; recorded planner/connector errors;
+unresolved gaps; recommendation revision and human-review history. No timestamps,
+approvals, customer facts or evidence are invented. Synthetic-data and no-payment-
+authorization notices are explicit. Reviewer labels remain unauthenticated.
+
+Export uses only existing state, without recomputing payment rules, graph resume,
+provider/connector calls or state mutation. Download sends precomputed bytes with
+`on_click="ignore"`; selection, counts, budgets and review history are unchanged.
+Missing optional values are marked not recorded; failed controls remain unavailable.
+Escaped literal text, bundled fonts, wrapping tables and page footers provide readable
+pagination. ReportLab invariant metadata and no generation timestamp make repeat
+exports of the same snapshot byte-identical with locked dependencies.
+
+Dependencies: runtime `reportlab>=4.4,<5` locked to **4.5.1**; development-only
+`pypdf>=6,<7` locked to **6.21.4** for validation/text extraction. No existing locked
+package versions changed. A temporary PDFium renderer was installed only in the
+ignored `.cache/payment_ops/pdfqa/` QA directory, not in project manifests.
+
+Verification: focused PDF plus investigation UI suite **31 passed in 17.56s**;
+full offline suite **839 passed in 48.57s** (previous 824 plus 13 PDF and 2 download
+interaction cases). Coverage includes all-pass, low balance, Fraud outage, planner
+timeout/fallback, acceptance/escalation, a retained-state recheck, missing optional
+values, failed lookup, invalid snapshots, valid PDF/extracted facts, repeatable bytes,
+literal long notes, unchanged state/call counts and download-trigger replay. AppTest
+exposes download as an unknown element rather than a clickable wrapper: tests assert
+the actual `ignore_rerun` flag and submit its widget trigger to verify that even an
+unsolicited backend rerun cannot start/resume the graph. A real browser file-save
+rehearsal remains an owner acceptance step.
+
+Visual QA inspected all eight rendered pages from pending and escalated offline
+sample reports; layouts were readable with no observed clipping/overlap. Samples
+remain ignored local QA artifacts, not saved evaluation results. `git diff --check`
+and relative documentation link checks passed. No Nebius calls; graph, planner,
+review policy, payment engine, synthetic fixtures and Week 2 behavior are unchanged.
+
+PRD amendment and Streamlit guide updated. Final Gen Academy submission/demo files
+remain unchanged at their approved baseline. Before revised delivery, review
+submission sections 6-8, 14, 18-19 and demo screen/test-count narration after all
+enhancements are accepted. No new course submission, upload or live export test is
+claimed. Nothing staged, committed or pushed in Task 9A; unrelated DOCX exports
+remain untouched.
+
+Next: owner reviews the report/download in the running app, then separately scopes
+Task 9B SOP guidance. No known technical blocker for 9B; this task does not authorize
+or implement guidance, a UI redesign (9C), additional agents/connectors, banking
+writes, authentication, persistence, AWS or real bank access.
+
+## Week 3 Task 8A: submission preparation checkpoint (November 9, 2026)
+
+This is the current checkpoint. Sections below retain Week 1/Week 2 history and
+their original scope; older statements that no Week 3 scope exists or that the app
+has only two views are historical. Week 1 remains frozen. Week 2 implementation,
+saved evaluations and owner-recorded demonstration are complete for course
+progression; its human quality review and formal latency qualification remain
+outstanding, with no new scores or sign-off inferred.
+
+Week 3 implementation is complete on `feat/week3-payment-investigation-agent`,
+local HEAD `ac85a7e152c0e698d8e2428fb2cf0c3623181bb2` at this documentation checkpoint.
+The existing synthetic samples, connector contracts/mocks, payment engine and
+Week 2 logic/corpus/evaluations are reused unchanged. LangGraph 1.2.20 is locked.
+The original MVP PRD remains a proposal/history document; implemented details in
+this checkpoint and the submission report supersede its optional/planned behavior.
+
+Actual architecture: Streamlit's third Workspace view creates a session-owned
+controller and in-memory checkpointer, loads the selected synthetic payment,
+loops through Nebius JSON action planning and read-only StructuredTool dispatch,
+records evidence/errors and builds deterministic findings/recommendations, then
+pauses at genuine LangGraph `interrupt()`. Validated `Command(resume=...)` resumes
+the same thread. A human-requested connector check executes directly without
+restarting the planner, increments recommendation revision and interrupts again.
+Payment lookup is application-controlled; only the four evidence tools and
+`finish` are planner choices. Optional agent RAG guidance is deferred; the existing
+Knowledge Assistant remains a separate workspace.
+
+Important decisions: immutable payment binding; strict JSON schema/action allowlist
+and eligibility; mandatory-control completion before model finish; deterministic
+payment evaluation; current evidence separate from append-only history; sanitized
+failures; visibly degraded fallback; recommendation-only human review with stale,
+duplicate and concurrent response protection. No payment mutation action exists.
+Bounds remain 7 tool attempts, 8 planner attempts, 180 active seconds (soft limit),
+2 review rounds and one shared extra connector attempt for recovery OR human
+recheck. Without optional guidance the normal five initial attempts plus one extra
+total six, even though the configured cap is seven. Review waiting does not consume
+active time. Reviewer identity is not authenticated; restart loses session state.
+
+Verification in Task 8A: `uv run --locked pytest -q` -> **824 passed in 37.48s**.
+This is the full offline suite across Weeks 1/2/3, including graph/controller/tool,
+LangGraph smoke and 16 investigation UI tests; injected providers are test-only.
+No Nebius calls were made in documentation preparation. `git diff --check` and
+relative documentation link checks passed. No code, synthetic data, golden files
+or saved evaluation outputs changed.
+
+Owner-reported live acceptance evidence supplied in Task 8A (not new Codex runs):
+
+- A, `SYNTHETIC-WIRE-001`: five model decisions, lookup plus four successful
+  connectors, all controls passed, READY FOR PROCESSING; accepted recommendation;
+  completed and reviewed, with tool attempts remaining five.
+- B, `SYNTHETIC-WIRE-LOW-BALANCE`: initial Core action succeeded; second planner
+  attempt recorded `planner_timeout`; deterministic fallback gathered remaining
+  evidence. Insufficient balance correctly produced REJECTED. Human Core recheck
+  retained state, raised attempts to six and recommendation revision to two,
+  exhausted the shared extra-check budget and reached second review. Planning
+  remained degraded. No final terminal outcome is confirmed. This supplied
+  diagnostic resolves Task 7B's previously unknown failure category, but does not
+  establish the underlying provider/network root cause.
+- C, `SYNTHETIC-WIRE-UNAVAILABLE`: five model decisions; Fraud
+  `connector_unavailable`, other controls completed, missing Fraud evidence retained,
+  MANUAL REVIEW; human End and Escalate; final escalated, five attempts, one review round.
+
+Known limits: model timeout/variability; no formal Week 3 latency or held-out
+reliability benchmark; three rehearsals are not a percentage success estimate.
+No saved live trace archive was supplied for independent replay verification.
+No persistent cross-session memory, production audit store, authenticated reviewer,
+real bank connectivity or payment execution. Existing Week 2 quality gaps remain.
+
+Submission assets prepared: `docs/WEEK3_GEN_ACADEMY_SUBMISSION.md` and
+`docs/WEEK3_GEN_ACADEMY_DEMO_SCRIPT.md` (target approximately 4:30, under five minutes).
+Final Week 3 recording/upload/link, Google Doc creation/sharing, GitHub finalization
+and course submission are unconfirmed. The prior 4:58 video belongs to Week 2.
+No commit or push is authorized in Task 8A; the two unrelated DOCX exports remain
+untracked and excluded. Actual course submission must be confirmed by the owner.
+
+Next task: owner reviews these assets, confirms course cutoff/timezone and portal
+requirements for November 11, 2026, records/uploads the Week 3 demo, shares required
+document/video links, separately authorizes Git commit/push, verifies remote links,
+submits and records confirmation. Do not merge into the default branch.
+Deferred/out of scope: new agent features, optional RAG integration, multi-agent
+architecture, MCP/A2A, persistent memory, external banking APIs, payment execution,
+AWS deployment and production authentication. Later diagnostic/evaluation work
+requires separate authorization; do not weaken safety boundaries to improve demos.
+
 ## Task 21: Week 2 course submission checkpoint (November 9, 2026)
 
 This checkpoint supersedes earlier pending-rehearsal statements below. Week 2
@@ -702,7 +1098,7 @@ Real banking integrations, payment execution/release, authentication, databases,
 API servers, AWS infrastructure, RAG, LLMs, and AI agents. No additional banking
 rules, production controls, or Week 2 features were implemented.
 
-## Next task
+## Historical Week 2 next task (superseded for active Week 3 work)
 
 Finalize course delivery: verify the Task 21 documentation commit on the remote
 feature branch, confirm Google Doc creation/sharing, upload the 4:58 video and

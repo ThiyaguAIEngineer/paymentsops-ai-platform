@@ -66,7 +66,7 @@ def test_metric_exclusions_do_not_drop_instructions() -> None:
 def test_initial_render_and_metrics() -> None:
     app = AppTest.from_file(str(APP_PATH), default_timeout=20).run()
     assert not app.exception
-    assert app.title[0].value == "Payment Operations Intelligence Platform"
+    assert app.title[0].value == "Payment Operations Intelligence Console"
     assert [metric.value for metric in app.metric] == ["20", "$300,107.02", "4", "6", "10"]
     assert len(app.dataframe[0].value) == 20
     assert len(app.selectbox[1].options) == 20

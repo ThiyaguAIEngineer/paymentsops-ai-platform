@@ -16,6 +16,7 @@ from payment_ops.ui.helpers import (
     DECISION_LABELS, PaymentEntry, aggregate_metrics, filter_payments,
     evidence_rows, format_amount, payment_rows,
 )
+from payment_ops.ui.presentation import console_styles, metric_cards, page_header, control_findings
 
 
 CHECK_LABELS = {
@@ -44,13 +45,12 @@ def load_payments() -> list[PaymentEntry]:
 
 def render_metrics(entries: list[PaymentEntry]) -> None:
     metrics = aggregate_metrics(entries)
-    columns = st.columns(5)
-    columns[0].metric("Total Payments", metrics["total_payments"])
-    columns[1].metric("Total Payment Value", format_amount(metrics["total_value"]))
-    for column, decision in zip(columns[2:], (
-        PaymentDecision.READY_FOR_PROCESSING, PaymentDecision.MANUAL_REVIEW, PaymentDecision.REJECTED,
-    ), strict=True):
-        column.metric(decision.value.title(), metrics["decision_counts"][decision])
+    metric_cards([
+        ("Total Payments", metrics["total_payments"]),
+        ("Total Payment Value", format_amount(metrics["total_value"])),
+        *((d.value.title(), metrics["decision_counts"][d]) for d in (
+            PaymentDecision.READY_FOR_PROCESSING, PaymentDecision.MANUAL_REVIEW, PaymentDecision.REJECTED)),
+    ], key="kpi_wire")
     st.caption(
         f"Metrics cover all instructions. Total value sums finite, positive amounts in USD; "
         f"{metrics['excluded_amounts']} invalid or missing amounts excluded."
@@ -78,10 +78,12 @@ def render_detail(entry: PaymentEntry, processing: PaymentProcessingResult) -> N
         for field in fields(payment)
     ])
     st.subheader("Validation checks")
-    st.dataframe([
-        {"Control": check.area.value, "Status": CHECK_LABELS[check.status], "Explanation": " ".join(check.reasons)}
-        for check in result.checks
-    ], hide_index=True, width="stretch")
+    control_findings([{"area": c.area.value, "status": c.status.value, "reasons": c.reasons} for c in result.checks])
+    with st.expander("Control comparison table"):
+        st.dataframe([
+            {"Control": check.area.value, "Status": CHECK_LABELS[check.status], "Explanation": " ".join(check.reasons)}
+            for check in result.checks
+        ], hide_index=True, width="stretch")
     st.caption("UNAVAILABLE means control information could not be evaluated. SKIPPED means the check was not performed.")
     st.subheader("Review and rejection findings")
     if result.reasons:
@@ -95,7 +97,7 @@ def render_detail(entry: PaymentEntry, processing: PaymentProcessingResult) -> N
 
 
 def render_wire_validation() -> None:
-    st.subheader("Commercial Wire Validation Simulator")
+    page_header("Wire Validation", "Review synthetic instructions, control findings and the evidence behind each simulator decision.", eyebrow="01 / VALIDATE")
     st.caption("Week 1 • Synthetic data only • Read-only educational simulator")
     try:
         entries = load_payments()
@@ -105,7 +107,8 @@ def render_wire_validation() -> None:
         return
     render_metrics(entries)
     st.subheader("Payments")
-    decision_filter = st.selectbox("Filter by decision", ["All decisions", *(decision.value for decision in PaymentDecision)], key="decision_filter")
+    with st.container(border=True):
+        decision_filter = st.selectbox("Filter by decision", ["All decisions", *(decision.value for decision in PaymentDecision)], key="decision_filter")
     selected_decision = None if decision_filter == "All decisions" else PaymentDecision(decision_filter)
     filtered = filter_payments(entries, selected_decision)
     st.caption(f"Showing {len(filtered)} of {len(entries)} payments")
@@ -118,13 +121,31 @@ def render_wire_validation() -> None:
 
 
 def main() -> None:
-    st.set_page_config(page_title="Payment Operations Intelligence Platform", page_icon="🏦", layout="wide")
-    st.title("Payment Operations Intelligence Platform")
-    view = st.sidebar.radio("Workspace", ["Wire Validation", "Knowledge Assistant"], key="workspace_view")
+    st.set_page_config(page_title="PaymentOps Intelligence Console", page_icon="🏦", layout="wide")
+    console_styles()
+    with st.sidebar:
+        with st.container(key="console_brand"):
+            st.subheader("PaymentOps")
+            st.caption("OPERATIONS INTELLIGENCE")
+        st.info("SYNTHETIC DEMONSTRATION ENVIRONMENT")
+        view = st.radio("Workspace", ["Wire Validation", "Knowledge Assistant", "Payment Investigation Agent"], key="workspace_view")
+        st.divider()
+        st.caption("Read-only mock integrations. No real bank connectivity or payment execution.")
+    with st.container(key="paymentops_console"):
+        st.title("Payment Operations Intelligence Console")
+        st.caption("SYNTHETIC DEMONSTRATION ENVIRONMENT · No payment authorization")
+        _render_workspace(view)
+
+
+def _render_workspace(view):
     if view == "Knowledge Assistant":
         # Lazy import keeps Week 1 startup independent of RAG configuration.
         from payment_ops.ui.knowledge_view import render_knowledge_assistant
         render_knowledge_assistant()
+    elif view == "Payment Investigation Agent":
+        from payment_ops.ui.investigation_view import render_investigation_agent
+
+        render_investigation_agent()
     else:
         render_wire_validation()
 
